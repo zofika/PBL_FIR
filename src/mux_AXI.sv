@@ -11,8 +11,8 @@ module mux#(
  
 
 always_ff @( posedge clk ) begin // jesli bez zegara always_comb 
-   if(FSM_MUX) probka_address <= A_probka_FIR;
-   else probka_address <= a_address;
+   if(FSM_MUX) probka_address <= a_address;
+   else probka_address <= A_probka_FIR;
 end
  
 
