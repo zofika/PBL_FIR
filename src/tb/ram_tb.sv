@@ -40,6 +40,9 @@ module ram_tb;
         dane   = 0;
         #10;
 
+
+
+
         @(posedge clk);
         wr_mem = 1;
         adres  = 8'd0;

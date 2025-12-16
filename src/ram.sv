@@ -16,8 +16,9 @@ logic [DATA_WIDTH-1:0] pamiec_RAM [0:(1<<ADDR_WIDTH)-1];
 
 always_ff @( posedge clk ) begin : Ram
     if(wr) pamiec_RAM[adres] <= data;
+    data_out <= pamiec_RAM[adres];
 end
 
-assign data_out = pamiec_RAM[adres];
+//assign data_out = pamiec_RAM[adres];
 
 endmodule
