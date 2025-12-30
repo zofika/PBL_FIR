@@ -1,0 +1,457 @@
+$date
+	Tue Dec 30 21:46:52 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module axi_tb $end
+$var wire 1 ! wready $end
+$var wire 2 " state_w [1:0] $end
+$var wire 1 # bvalid $end
+$var wire 2 $ bresp [1:0] $end
+$var wire 1 % awready $end
+$var wire 1 & a_wr $end
+$var wire 16 ' a_data_out [15:0] $end
+$var wire 13 ( a_address_wr [12:0] $end
+$var reg 1 ) a_clk $end
+$var reg 1 * a_rst_n $end
+$var reg 32 + awaddr [31:0] $end
+$var reg 2 , awburst [1:0] $end
+$var reg 4 - awlen [3:0] $end
+$var reg 3 . awsize [2:0] $end
+$var reg 1 / awvalid $end
+$var reg 1 0 bready $end
+$var reg 64 1 wdata [63:0] $end
+$var reg 1 2 wlast $end
+$var reg 8 3 wstrb [7:0] $end
+$var reg 1 4 wvalid $end
+$scope module uut $end
+$var wire 1 ) a_clk $end
+$var wire 21 5 a_data_in [20:0] $end
+$var wire 1 * a_rst_n $end
+$var wire 32 6 araddr [31:0] $end
+$var wire 2 7 arburst [1:0] $end
+$var wire 4 8 arlen [3:0] $end
+$var wire 3 9 arsize [2:0] $end
+$var wire 1 : arvalid $end
+$var wire 32 ; awaddr [31:0] $end
+$var wire 2 < awburst [1:0] $end
+$var wire 4 = awlen [3:0] $end
+$var wire 3 > awsize [2:0] $end
+$var wire 1 / awvalid $end
+$var wire 1 0 bready $end
+$var wire 16 ? probka [15:0] $end
+$var wire 1 @ rready $end
+$var wire 2 A state_w_out [1:0] $end
+$var wire 64 B wdata [63:0] $end
+$var wire 1 2 wlast $end
+$var wire 8 C wstrb [7:0] $end
+$var wire 1 4 wvalid $end
+$var parameter 32 D address_out2_SIZE $end
+$var parameter 32 E address_out_SIZE $end
+$var parameter 32 F data_in_SIZE $end
+$var parameter 32 G data_out_SIZE $end
+$var reg 13 H a_address_rd [12:0] $end
+$var reg 13 I a_address_wr [12:0] $end
+$var reg 16 J a_data_out [15:0] $end
+$var reg 1 & a_wr $end
+$var reg 1 K arready $end
+$var reg 13 L awaddr_reg [12:0] $end
+$var reg 2 M awburst_reg [1:0] $end
+$var reg 4 N awlen_reg [3:0] $end
+$var reg 1 % awready $end
+$var reg 3 O awsize_reg [2:0] $end
+$var reg 2 P bresp [1:0] $end
+$var reg 1 # bvalid $end
+$var reg 2 Q next_state_w [1:0] $end
+$var reg 64 R rdata [63:0] $end
+$var reg 1 S rlast $end
+$var reg 2 T rresp [1:0] $end
+$var reg 1 U rvalid $end
+$var reg 2 V state_w [1:0] $end
+$var reg 1 ! wready $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b10000 G
+b10101 F
+b1101 E
+b1101 D
+$end
+#0
+$dumpvars
+b0 V
+xU
+bx T
+xS
+bx R
+b0 Q
+b0 P
+b0 O
+b0 N
+b0 M
+b0 L
+xK
+b0 J
+b0 I
+bx H
+b11 C
+b0 B
+b0 A
+z@
+bz ?
+b1 >
+b0 =
+b1 <
+b0 ;
+z:
+bz 9
+bz 8
+bz 7
+bz 6
+bz 5
+04
+b11 3
+02
+b0 1
+00
+0/
+b1 .
+b0 -
+b1 ,
+b0 +
+0*
+1)
+b0 (
+b0 '
+0&
+1%
+b0 $
+0#
+b0 "
+0!
+$end
+#5
+0)
+#10
+1)
+#15
+0)
+#20
+1%
+1)
+1*
+bx ,
+bx <
+b0xx .
+b0xx >
+b0x -
+b0x =
+b0xxxxxxxxxxxxxxxx +
+b0xxxxxxxxxxxxxxxx ;
+#25
+0)
+#30
+1)
+#35
+0)
+#40
+b1 "
+b1 A
+b1 V
+b1 M
+b1 O
+b1 N
+b1010 L
+b1 Q
+1%
+1)
+1/
+b1 ,
+b1 <
+b1 .
+b1 >
+b1 -
+b1 =
+b1010 +
+b1010 ;
+#45
+0)
+#50
+b1011 L
+b1010101111001101 '
+b1010101111001101 J
+b1010 (
+b1010 I
+1&
+1!
+0%
+1)
+14
+b1010101111001101 1
+b1010101111001101 B
+bx ,
+bx <
+b0xx .
+b0xx >
+b0x -
+b0x =
+b0xxxxxxxxxxxxxxxx +
+b0xxxxxxxxxxxxxxxx ;
+0/
+#55
+0)
+#60
+b10 "
+b10 A
+b10 V
+b10 Q
+1!
+b1011 (
+b1011 I
+b1011101111011101 '
+b1011101111011101 J
+1&
+1)
+12
+b1011101111011101 1
+b1011101111011101 B
+#65
+0)
+#70
+1#
+0!
+b0 (
+b0 I
+b0 '
+b0 J
+0&
+1)
+02
+04
+#75
+0)
+#80
+b0 "
+b0 A
+b0 V
+b1 $
+b1 P
+b0 Q
+1#
+1)
+10
+#85
+0)
+#90
+1%
+0#
+b0 $
+b0 P
+1)
+00
+#95
+0)
+#100
+1)
+#105
+0)
+#110
+1)
+#115
+0)
+#120
+1)
+#125
+0)
+#130
+1)
+#135
+0)
+#140
+1)
+#145
+0)
+#150
+1)
+#155
+0)
+#160
+1)
+#165
+0)
+#170
+1)
+#175
+0)
+#180
+1)
+#185
+0)
+#190
+1)
+#195
+0)
+#200
+1)
+#205
+0)
+#210
+1)
+#215
+0)
+#220
+1)
+#225
+0)
+#230
+1)
+#235
+0)
+#240
+1)
+#245
+0)
+#250
+1)
+#255
+0)
+#260
+1)
+#265
+0)
+#270
+1)
+#275
+0)
+#280
+1)
+#285
+0)
+#290
+1)
+#295
+0)
+#300
+1)
+#305
+0)
+#310
+1)
+#315
+0)
+#320
+1)
+#325
+0)
+#330
+1)
+#335
+0)
+#340
+1)
+#345
+0)
+#350
+1)
+#355
+0)
+#360
+1)
+#365
+0)
+#370
+1)
+#375
+0)
+#380
+1)
+#385
+0)
+#390
+1)
+#395
+0)
+#400
+1)
+#405
+0)
+#410
+1)
+#415
+0)
+#420
+1)
+#425
+0)
+#430
+1)
+#435
+0)
+#440
+1)
+#445
+0)
+#450
+1)
+#455
+0)
+#460
+1)
+#465
+0)
+#470
+1)
+#475
+0)
+#480
+1)
+#485
+0)
+#490
+1)
+#495
+0)
+#500
+1)
+#505
+0)
+#510
+1)
+#515
+0)
+#520
+1)
+#525
+0)
+#530
+1)
+#535
+0)
+#540
+1)
+#545
+0)
+#550
+1)
+#555
+0)
+#560
+1)
+#565
+0)
+#570
+1)
+#575
+0)
+#580
+1)
+#585
+0)
+#590
+1)
