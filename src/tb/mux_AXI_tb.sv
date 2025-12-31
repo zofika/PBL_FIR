@@ -10,13 +10,20 @@ module tb_mux;
     logic FSM_MUX;
     logic [WIDTH-1:0] probka_address;
 
-    mux #(.WIDTH(WIDTH)) dut (
-        .clk(clk),
-        .A_probka_FIR(A_probka_FIR),
-        .a_address(a_address),
-        .FSM_MUX(FSM_MUX),
-        .probka_address(probka_address)
+    // mux #(.WIDTH(WIDTH)) dut (
+    //     .clk(clk),
+    //     .A_probka_FIR(A_probka_FIR),
+    //     .a_address(a_address),
+    //     .FSM_MUX(FSM_MUX),
+    //     .probka_address(probka_address)
+    // );
+    multiplekser #(.WIDTH(WIDTH)) dut (
+        .data_a(A_probka_FIR),
+        .data_b(a_address),
+        .sel(FSM_MUX),
+        .data_out(probka_address)
     );
+
 
     // Zegar 10 ns
     always #5 clk = ~clk;

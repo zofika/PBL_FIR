@@ -1,0 +1,571 @@
+$date
+	Tue Dec 30 22:53:23 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1s
+$end
+$scope module AXI_main_tb $end
+$var wire 1 ! wready $end
+$var wire 1 " bvalid $end
+$var wire 2 # bresp [1:0] $end
+$var wire 1 $ awready $end
+$var reg 1 % a_clk $end
+$var reg 1 & a_rst_n $end
+$var reg 32 ' awaddr [31:0] $end
+$var reg 2 ( awburst [1:0] $end
+$var reg 4 ) awlen [3:0] $end
+$var reg 3 * awsize [2:0] $end
+$var reg 1 + awvalid $end
+$var reg 1 , bready $end
+$var reg 64 - wdata [63:0] $end
+$var reg 1 . wlast $end
+$var reg 8 / wstrb [7:0] $end
+$var reg 1 0 wvalid $end
+$scope module uut $end
+$var wire 13 1 Adres_probki_FIR [12:0] $end
+$var wire 1 % a_clk $end
+$var wire 1 & a_rst_n $end
+$var wire 32 2 araddr [31:0] $end
+$var wire 2 3 arburst [1:0] $end
+$var wire 4 4 arlen [3:0] $end
+$var wire 3 5 arsize [2:0] $end
+$var wire 1 6 arvalid $end
+$var wire 32 7 awaddr [31:0] $end
+$var wire 2 8 awburst [1:0] $end
+$var wire 4 9 awlen [3:0] $end
+$var wire 3 : awsize [2:0] $end
+$var wire 1 + awvalid $end
+$var wire 21 ; axi_data_in [20:0] $end
+$var wire 1 , bready $end
+$var wire 1 < rready $end
+$var wire 1 = sel_FSM_mux_wej $end
+$var wire 64 > wdata [63:0] $end
+$var wire 1 . wlast $end
+$var wire 8 ? wstrb [7:0] $end
+$var wire 1 0 wvalid $end
+$var wire 1 ! wready $end
+$var wire 2 @ state_w_out [1:0] $end
+$var wire 1 A rvalid $end
+$var wire 2 B rresp [1:0] $end
+$var wire 1 C rlast $end
+$var wire 64 D rdata [63:0] $end
+$var wire 13 E probka_address_in [12:0] $end
+$var wire 1 " bvalid $end
+$var wire 2 F bresp [1:0] $end
+$var wire 1 G axi_wr $end
+$var wire 16 H axi_probka [15:0] $end
+$var wire 16 I axi_data_out [15:0] $end
+$var wire 13 J axi_adres_zapisu [12:0] $end
+$var wire 13 K axi_address_odczytu [12:0] $end
+$var wire 1 $ awready $end
+$var wire 1 L arready $end
+$var parameter 32 M Address_size_out $end
+$var parameter 32 N Address_size_out2 $end
+$var parameter 32 O Data_size_in $end
+$var parameter 32 P Data_size_out $end
+$var parameter 32 Q RAM_addr_WIDTH_wej $end
+$var parameter 32 R RAM_addr_WIDTH_wsp $end
+$var parameter 32 S RAM_addr_WIDTH_wyj $end
+$var parameter 32 T RAM_data_WIDTH_wej $end
+$var parameter 32 U RAM_data_WIDTH_wsp $end
+$var parameter 32 V RAM_data_WIDTH_wyj $end
+$var parameter 32 W Szerokosc_mux_wej $end
+$scope module RAM_wej $end
+$var wire 1 % clk $end
+$var wire 1 G wr $end
+$var wire 16 X data [15:0] $end
+$var wire 13 Y adres [12:0] $end
+$var parameter 32 Z ADDR_WIDTH $end
+$var parameter 32 [ DATA_WIDTH $end
+$var reg 16 \ data_out [15:0] $end
+$scope begin Ram $end
+$upscope $end
+$upscope $end
+$scope module mux_axi_wej $end
+$var wire 13 ] data_a [12:0] $end
+$var wire 13 ^ data_out [12:0] $end
+$var wire 1 = sel $end
+$var wire 13 _ data_b [12:0] $end
+$var parameter 32 ` WIDTH $end
+$upscope $end
+$scope module u_axi $end
+$var wire 1 % a_clk $end
+$var wire 21 a a_data_in [20:0] $end
+$var wire 1 & a_rst_n $end
+$var wire 32 b araddr [31:0] $end
+$var wire 2 c arburst [1:0] $end
+$var wire 4 d arlen [3:0] $end
+$var wire 3 e arsize [2:0] $end
+$var wire 1 6 arvalid $end
+$var wire 32 f awaddr [31:0] $end
+$var wire 2 g awburst [1:0] $end
+$var wire 4 h awlen [3:0] $end
+$var wire 3 i awsize [2:0] $end
+$var wire 1 + awvalid $end
+$var wire 1 , bready $end
+$var wire 16 j probka [15:0] $end
+$var wire 1 < rready $end
+$var wire 2 k state_w_out [1:0] $end
+$var wire 64 l wdata [63:0] $end
+$var wire 1 . wlast $end
+$var wire 8 m wstrb [7:0] $end
+$var wire 1 0 wvalid $end
+$var parameter 32 n address_out2_SIZE $end
+$var parameter 32 o address_out_SIZE $end
+$var parameter 32 p data_in_SIZE $end
+$var parameter 32 q data_out_SIZE $end
+$var reg 13 r a_address_rd [12:0] $end
+$var reg 13 s a_address_wr [12:0] $end
+$var reg 16 t a_data_out [15:0] $end
+$var reg 1 G a_wr $end
+$var reg 1 L arready $end
+$var reg 13 u awaddr_reg [12:0] $end
+$var reg 2 v awburst_reg [1:0] $end
+$var reg 4 w awlen_reg [3:0] $end
+$var reg 1 $ awready $end
+$var reg 3 x awsize_reg [2:0] $end
+$var reg 2 y bresp [1:0] $end
+$var reg 1 " bvalid $end
+$var reg 2 z next_state_w [1:0] $end
+$var reg 64 { rdata [63:0] $end
+$var reg 1 C rlast $end
+$var reg 2 | rresp [1:0] $end
+$var reg 1 A rvalid $end
+$var reg 2 } state_w [1:0] $end
+$var reg 1 ! wready $end
+$upscope $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b10000 q
+b10101 p
+b1101 o
+b1101 n
+b1101 `
+b10000 [
+b1101 Z
+b1101 W
+b10000 V
+b10000 U
+b10000 T
+b1101 S
+b1101 R
+b1101 Q
+b10000 P
+b10101 O
+b1101 N
+b1101 M
+$end
+#0
+$dumpvars
+b0 }
+bx |
+bx {
+b0 z
+b0 y
+b0 x
+b0 w
+b0 v
+b0 u
+b0 t
+b0 s
+bx r
+b11 m
+b0 l
+b0 k
+bx j
+b1 i
+b0 h
+b1 g
+b0 f
+bz e
+bz d
+bz c
+bz b
+bz a
+b0 _
+b0 ^
+b0 ]
+bx \
+b0 Y
+b0 X
+xL
+bx K
+b0 J
+b0 I
+bx H
+0G
+b0 F
+b0 E
+bx D
+xC
+bx B
+xA
+b0 @
+b11 ?
+b0 >
+0=
+z<
+bz ;
+b1 :
+b0 9
+b1 8
+b0 7
+z6
+bz 5
+bz 4
+bz 3
+bz 2
+b0 1
+00
+b11 /
+0.
+b0 -
+0,
+0+
+b1 *
+b0 )
+b1 (
+b0 '
+0&
+1%
+1$
+b0 #
+0"
+0!
+$end
+#5
+0%
+#10
+1%
+#15
+0%
+#20
+1$
+1%
+1&
+bx (
+bx 8
+bx g
+b0xx *
+b0xx :
+b0xx i
+b0x )
+b0x 9
+b0x h
+b0xxxxxxxxxxxxxxxx '
+b0xxxxxxxxxxxxxxxx 7
+b0xxxxxxxxxxxxxxxx f
+#25
+0%
+#30
+1%
+#35
+0%
+#40
+b1 @
+b1 k
+b1 }
+b1 v
+b1 x
+b1010 u
+b1 z
+1$
+1%
+1+
+b1 (
+b1 8
+b1 g
+b1 *
+b1 :
+b1 i
+b0 )
+b0 9
+b0 h
+b1010 '
+b1010 7
+b1010 f
+#45
+0%
+#50
+b10 @
+b10 k
+b10 }
+b10 z
+b1010101111001101 I
+b1010101111001101 X
+b1010101111001101 t
+b1010 E
+b1010 Y
+b1010 ^
+b1010 J
+b1010 _
+b1010 s
+1G
+1!
+0$
+1%
+1.
+10
+b1010101111001101 -
+b1010101111001101 >
+b1010101111001101 l
+bx (
+bx 8
+bx g
+b0xx *
+b0xx :
+b0xx i
+b0x )
+b0x 9
+b0x h
+b0xxxxxxxxxxxxxxxx '
+b0xxxxxxxxxxxxxxxx 7
+b0xxxxxxxxxxxxxxxx f
+0+
+#55
+0%
+#60
+1"
+0!
+b0 E
+b0 Y
+b0 ^
+b0 J
+b0 _
+b0 s
+b0 I
+b0 X
+b0 t
+0G
+1%
+0.
+00
+#65
+0%
+#70
+b0 @
+b0 k
+b0 }
+b1 #
+b1 F
+b1 y
+b0 z
+1"
+1%
+1,
+#75
+0%
+#80
+1$
+0"
+b0 #
+b0 F
+b0 y
+1%
+0,
+#85
+0%
+#90
+1%
+#95
+0%
+#100
+1%
+#105
+0%
+#110
+1%
+#115
+0%
+#120
+1%
+#125
+0%
+#130
+1%
+#135
+0%
+#140
+1%
+#145
+0%
+#150
+1%
+#155
+0%
+#160
+1%
+#165
+0%
+#170
+1%
+#175
+0%
+#180
+1%
+#185
+0%
+#190
+1%
+#195
+0%
+#200
+1%
+#205
+0%
+#210
+1%
+#215
+0%
+#220
+1%
+#225
+0%
+#230
+1%
+#235
+0%
+#240
+1%
+#245
+0%
+#250
+1%
+#255
+0%
+#260
+1%
+#265
+0%
+#270
+1%
+#275
+0%
+#280
+1%
+#285
+0%
+#290
+1%
+#295
+0%
+#300
+1%
+#305
+0%
+#310
+1%
+#315
+0%
+#320
+1%
+#325
+0%
+#330
+1%
+#335
+0%
+#340
+1%
+#345
+0%
+#350
+1%
+#355
+0%
+#360
+1%
+#365
+0%
+#370
+1%
+#375
+0%
+#380
+1%
+#385
+0%
+#390
+1%
+#395
+0%
+#400
+1%
+#405
+0%
+#410
+1%
+#415
+0%
+#420
+1%
+#425
+0%
+#430
+1%
+#435
+0%
+#440
+1%
+#445
+0%
+#450
+1%
+#455
+0%
+#460
+1%
+#465
+0%
+#470
+1%
+#475
+0%
+#480
+1%
+#485
+0%
+#490
+1%
+#495
+0%
+#500
+1%
+#505
+0%
+#510
+1%
+#515
+0%
+#520
+1%
+#525
+0%
+#530
+1%
+#535
+0%
+#540
+1%
+#545
+0%
+#550
+1%
+#555
+0%
+#560
+1%
+#565
+0%
+#570
+1%
+#575
+0%
+#580
+1%
