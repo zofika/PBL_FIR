@@ -40,41 +40,60 @@ module ram_tb;
         dane   = 0;
         #10;
 
-
-
-
-        @(posedge clk);
+        //@(posedge clk);
         wr_mem = 1;
         adres  = 8'd0;
         dane   = 8'hAA;
-        @(posedge clk);
+        #10;
+        //@(posedge clk);
         wr_mem = 0;
 
-        @(posedge clk);
+        #10;
+        //@(posedge clk);
         wr_mem = 1;
         adres  = 8'd1;
         dane   = 8'h55;
-        @(posedge clk);
+        #10;//@(posedge clk);
         wr_mem = 0;
 
-        @(posedge clk);
+        #10;//@(posedge clk);
         wr_mem = 1;
         adres  = 8'd10;
         dane   = 8'hCC;
-        @(posedge clk);
+        #10;//@(posedge clk);
         wr_mem = 0;
 
-        @(posedge clk);
+        #10;//@(posedge clk);
         adres = 8'd0;
 
-        @(posedge clk);
+        #10;//@(posedge clk);
         adres = 8'd1;
 
-        @(posedge clk);
+        #10;//@(posedge clk);
         adres = 8'd10;
 
-        @(posedge clk);
+        #10;//@(posedge clk);
         adres = 8'd2;
+
+        #20;
+        wr_mem = 1;
+        adres  = 8'd15;
+        dane   = 8'hAA;
+        #10;
+        adres  = 8'd16;
+        dane   = 8'hAB;
+        #10;
+        adres  = 8'd17;
+        dane   = 8'hAC;
+        #10;
+        wr_mem = 0;
+
+        #20;
+        adres = 8'd15;
+        #10;
+        adres  = 8'd16;
+        #10;
+        adres  = 8'd17;
 
         #300;
         $finish;

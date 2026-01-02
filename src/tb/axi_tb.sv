@@ -60,43 +60,103 @@ module axi_tb;
 
     initial begin
         // reset
-        a_rst_n = 0;
-        bready = 0;
-        awvalid = 0; wvalid = 0;
-        awaddr = 0; awlen = 0; awsize = 2'b01; awburst = 2'b01;
-        wdata = 0; wstrb = 2'b11; wlast = 0;
-        #20;
-        awaddr = 16'hxxxx; awlen = 1'bx; awsize = 2'bxx; awburst = 2'bxx;
-        a_rst_n = 1;
+
         //======================
-        #20;
-        //#1;
-        awaddr = 16'h0A;
-        awlen = 1; //czyli 1 dana
-        awsize = 2'b01;
-        awburst = 2'b01;
-        awvalid = 1;
-        //#;
+//==================================================================================
+//Zapis
+        // a_rst_n = 0;
+        // bready = 0;
+        // awvalid = 0; wvalid = 0;
+        // awaddr = 0; awlen = 0; awsize = 2'b01; awburst = 2'b01;
+        // wdata = 0; wstrb = 2'b11; wlast = 0;
+        // #20;
+        // awaddr = 16'hxxxx; awlen = 1'bx; awsize = 2'bxx; awburst = 2'bxx;
+        // a_rst_n = 1;
+        //======================
+        // #20;
+        // //#1;
+        // awaddr = 16'h0A;
+        // awlen = 1; //czyli 1 dana
+        // awsize = 2'b01;
+        // awburst = 2'b01;
+        // awvalid = 1;
+        // //#;
 
-        #10; //#10;
-        awvalid = 0;
-        awaddr = 16'hxxxx; awlen = 1'bx; awsize = 2'bxx; awburst = 2'bxx;
+        // #10; //#10;
+        // awvalid = 0;
+        // awaddr = 16'hxxxx; awlen = 1'bx; awsize = 2'bxx; awburst = 2'bxx;
         
-        wdata = 16'hABCD; 
-        wstrb = 2'b11; 
-        wvalid = 1; 
-        wlast = 0;//wlast = 1;
-        #10;
-        wdata = 16'hBBDD;
-        wlast = 1;
-        #10;
-        wvalid = 0;
-        wlast = 0;
+        // wdata = 16'hABCD; 
+        // wstrb = 2'b11; 
+        // wvalid = 1; 
+        // wlast = 0;//wlast = 1;
+        // #10;
+        // wdata = 16'hBBDD;
+        // wlast = 1;
+        // #10;
+        // wvalid = 0;
+        // wlast = 0;
 
+        // #10
+        // bready = 1;
+        // #10;
+        // bready = 0;
+
+//==================================================================================
+//Odczyt
+
+        //axi.ram
+
+       //a_rst_n = 0;
+        rready  = 0;
+        arvalid = 0;
+        araddr  = 0;
+        arlen   = 0;
+        arsize  = 3'bxxx;
+        arburst = 2'bxx;
+        #20;
+        //a_rst_n = 1;
+
+        // 1 READ
+        #20;
+        araddr  = 32'h0000_000A;
         #10
-        bready = 1;
+        arvalid = 1;
+        #10 arvalid = 0;
+        // wait(arready == 1) begin
+        //     #10 arvalid = 0;
+        // end
         #10;
-        bready = 0;
+        araddr  = 32'h0000_000B;
+        //arvalid = 0;
+        // rready = 1;
+        // #10;
+        // rready =0;
+
+
+
+        // #50;
+        // rready  = 0;
+        // arvalid = 0;
+        // araddr  = 0;
+        // arlen   = 0;
+        // arsize  = 3'bxxx;
+        // arburst = 2'bxx;
+        // #20;
+        // // 1 READ
+        // #10;
+        // araddr  = 32'h0000_000A;
+        // arvalid = 1;
+
+        // #10;
+        // arvalid = 0;
+        // rready = 1;
+        // #10;
+        // rready =0;
+
+
+//==================================================================================
+//==================================================================================
 
 
 //         #10;
