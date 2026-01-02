@@ -70,7 +70,8 @@ logic [2:0] awsize_reg;
 logic [1:0] awburst_reg;
 //logic [data_out_SIZE-1:0] awdata_reg;
 
-logic [(address_out_SIZE+1)-1:0] araddr_reg; //+1 bo to idzie do RAM wej albo do wyj... dekoder bedzie
+logic [(address_out_SIZE)-1:0] araddr_reg; //+1 bo to idzie do RAM wej albo do wyj... dekoder bedzie
+logic araddr_reg_MSB;//do wyboru
 logic [2:0] arsize_reg;
 logic [1:0] arbursts_reg;
 logic [3:0] arlen_reg;
@@ -251,14 +252,17 @@ always @(posedge a_clk) begin
     end else begin
         state_r <= next_state_r;
         if(next_state_r == r_DATA_handshake) begin
-            araddr_reg <= araddr; 
+            araddr_reg <= araddr[address_out_SIZE-1:0];
+            araddr_reg_MSB <= araddr[address_out_SIZE];
             arlen_reg <= arlen;//0=>1 dana, 1=> 2,... + 1'b1
             arsize_reg <= arsize;
             arbursts_reg <= arburst;
         end
         if(next_state_r == r_DATA_address /*&& rready*/) begin
             
-            araddr_reg <= araddr_reg + 1'b1;//INC
+            if(arbursts_reg == 2'b01) begin
+                araddr_reg <= araddr_reg + 1'b1;//INC
+            end
 
             if(arlen_reg != 4'b0000) begin
                 arlen_reg <= arlen_reg - 1'b1;
@@ -292,11 +296,19 @@ always_comb begin   //always_comb
         r_DATA_handshake: begin //zapisz Adres. 1 raz
             arready = 1'b1;
             next_state_r = r_DATA;
-            a_address_wr = araddr_reg; //tutaj wysylam pierwszy adres juz, zeby potem odrazu moglem odczytac dana jakas.
+            case(araddr_reg_MSB)
+                1'b0: a_address_wr = araddr_reg;
+                1'b1: a_address_rd = araddr_reg;
+            endcase
+            //a_address_wr = araddr_reg; //tutaj wysylam pierwszy adres juz, zeby potem odrazu moglem odczytac dana jakas.
         end
         r_DATA: begin 
             //wystawiam daną i valid.
-            rdata = probka;
+            //rdata = probka;
+            case(araddr_reg_MSB)
+                1'b0: rdata = probka;
+                1'b1: rdata = a_data_in;
+            endcase
             rvalid = 1'b1;
             rresp = 2'b00; //OKAY
             if(arlen_reg == 4'b0000) begin //ostatnia dana juz.
@@ -311,14 +323,26 @@ always_comb begin   //always_comb
                 end
             end else begin //nie ma
                 next_state_r = r_DATA; //petla ale bez nowego adresu
-                a_address_wr = araddr_reg;
+                //a_address_wr = araddr_reg;
+                case(araddr_reg_MSB)
+                    1'b0: a_address_wr = araddr_reg;
+                    1'b1: a_address_rd = araddr_reg;
+                endcase                
             end
-            a_address_wr = araddr_reg;//zawsze daje adres tutaj
+            //a_address_wr = araddr_reg;//zawsze daje adres tutaj
+            case(araddr_reg_MSB)
+                1'b0: a_address_wr = araddr_reg;
+                1'b1: a_address_rd = araddr_reg;
+            endcase            
         end
         r_DATA_address: begin
             //po odczycie przez mastera, nowy adres, czekamy 1 takt na dane z ram
             rvalid = 1'b0;
-            a_address_wr = araddr_reg;
+            //a_address_wr = araddr_reg;
+            case(araddr_reg_MSB)
+                1'b0: a_address_wr = araddr_reg;
+                1'b1: a_address_rd = araddr_reg;
+            endcase
             next_state_r = r_DATA;
         end
         default: next_state_r = r_IDLE;

@@ -167,14 +167,14 @@ $display("dana adres B 2. %t, %h",$time ,uut.RAM_wej.adres);
          $display("dana C. %t, %h",$time ,uut.RAM_wej.pamiec_RAM[16'h0B]);
         #10;
         //======================
-        // uut.RAM_wej.pamiec_RAM[5'd1] = 16'h0001;
-        // uut.RAM_wej.pamiec_RAM[5'd2] = 16'h0002;
-        // uut.RAM_wej.pamiec_RAM[5'd3] = 16'h0003;
-        // uut.RAM_wej.pamiec_RAM[5'd4] = 16'h0004;
-        // uut.RAM_wej.pamiec_RAM[5'd5] = 16'h0005;
-        // uut.RAM_wej.pamiec_RAM[5'd6] = 16'h0006;
-        // uut.RAM_wej.pamiec_RAM[5'd7] = 16'h0007;
-        // uut.RAM_wej.pamiec_RAM[5'd8] = 16'h0008;
+        uut.RAM_wyj.pamiec_RAM[5'd1] = 16'h0001;
+        uut.RAM_wyj.pamiec_RAM[5'd2] = 16'h0002;
+        uut.RAM_wyj.pamiec_RAM[5'd3] = 16'h0003;
+        uut.RAM_wyj.pamiec_RAM[5'd4] = 16'h0004;
+        uut.RAM_wyj.pamiec_RAM[5'd5] = 16'h0005;
+        uut.RAM_wyj.pamiec_RAM[5'd6] = 16'h0006;
+        uut.RAM_wyj.pamiec_RAM[5'd7] = 16'h0007;
+        uut.RAM_wyj.pamiec_RAM[5'd8] = 16'h0008;
         //odczyt
          #50;
         //a_rst_n = 0;
@@ -183,13 +183,14 @@ $display("dana adres B 2. %t, %h",$time ,uut.RAM_wej.adres);
         araddr  = 0;
         arlen   = 0;
         arsize  = 3'bxxx;
-        arburst = 2'bxx;
+        arburst = 2'b01;
         #20;
         //a_rst_n = 1;
 
         // 1 READ
         #20;
-        araddr  = 16'h0A;//32'h0000_000A;
+        //araddr  = 16'h0A;//32'h0000_000A;
+        araddr  = 16'b0010000000000001;//32'h0000_000A;
         arlen   = 2;
         #9
         arvalid = 1;
