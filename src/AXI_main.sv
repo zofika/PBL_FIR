@@ -42,15 +42,18 @@ localparam Address_size_out = 13;
 localparam Data_size_in = 21;
 localparam Address_size_out2 = 13;
 localparam Szerokosc_mux_wej = 13;
+localparam Szerokosc_mux_wyj = 13;
 
 localparam RAM_addr_WIDTH_wej = 13;
 localparam RAM_data_WIDTH_wej = 16;
 
 localparam RAM_addr_WIDTH_wyj = 13;
-localparam RAM_data_WIDTH_wyj = 16;
+localparam RAM_data_WIDTH_wyj = 21;
 
 localparam RAM_addr_WIDTH_wsp = 13;
 localparam RAM_data_WIDTH_wsp = 16;
+
+
 //----
 wire [Address_size_out-1:0] axi_adres_zapisu;
 wire [Data_size_out-1:0] axi_data_out;
@@ -63,6 +66,11 @@ wire [Szerokosc_mux_wej-1:0] Adres_probki_FIR;//(A_probki_FIR)
 wire sel_FSM_mux_wej;
 wire [Szerokosc_mux_wej-1:0] probka_address_in;
 
+wire [Szerokosc_mux_wyj-1:0] probka_address_out;
+wire sel_FSM_mux_wyj;
+
+wire in_FSM_wyj_wr;
+wire [Data_size_in-1:0] in_FIR_probka_wynik;
 
 //---
 //TESTOWE do usuniecia
@@ -71,6 +79,9 @@ wire [1:0] state_w_out;
 
 assign sel_FSM_mux_wej = 1'b0;
 assign Adres_probki_FIR = '0;
+assign sel_FSM_mux_wyj = 1'b0;
+assign in_FSM_wyj_wr = 1'b0;
+assign in_FIR_probka_wynik = '0;
 //---
 
 //AXI
@@ -127,7 +138,14 @@ multiplekser #(
     .data_out(probka_address_in)
 );
 //MUX_AXI_wyj
-
+multiplekser #(
+    .WIDTH(Szerokosc_mux_wyj)
+) mux_axi_wyj (
+    .data_a(Adres_probki_FIR),//z FSM
+    .data_b(axi_address_odczytu),//z axi
+    .sel(sel_FSM_mux_wyj),
+    .data_out(probka_address_out)
+);
 
 //RAM (wej)
 ram #(
@@ -142,5 +160,15 @@ ram #(
 );
 
 //RAM (wyj)
+ram #(
+    .ADDR_WIDTH(RAM_addr_WIDTH_wyj),
+    .DATA_WIDTH(RAM_data_WIDTH_wyj)
+) RAM_wyj (
+    .clk(a_clk),
+    .adres(probka_address_out),
+    .data(in_FIR_probka_wynik),
+    .wr(in_FSM_wyj_wr),
+    .data_out(axi_data_in)//axi_probka też potem do FIR idzie.
+);
 
 endmodule
