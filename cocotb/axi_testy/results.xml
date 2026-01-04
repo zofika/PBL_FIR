@@ -1,0 +1,11 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1767554677" />
+    <testcase name="axi_test_1" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="16" time="0.013555526733398438" sim_time_ns="150.001" ratio_time="11065.671069086817" />
+    <testcase name="axi_test_2" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="49" time="0.005179643630981445" sim_time_ns="160.001" ratio_time="30890.349104902187" />
+    <testcase name="axi_test_3" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="87" time="0.22144603729248047" sim_time_ns="11050.001" ratio_time="49899.294361295935" />
+    <testcase name="axi_test_4" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="122" time="0.1780529022216797" sim_time_ns="10360.001" ratio_time="58184.960035650394" />
+    <testcase name="axi_test_5" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="156" time="0.277667760848999" sim_time_ns="110.0010000000002" ratio_time="396.1605037029158" />
+    <testcase name="axi_test_6" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="188" time="0.2346053123474121" sim_time_ns="14150.001" ratio_time="60314.06901411577" />
+  </testsuite>
+</testsuites>
