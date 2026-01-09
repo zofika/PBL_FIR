@@ -4,34 +4,60 @@
 ///////////////////////////////////////////////////////////////////////
 
 module AXI_main(
+    // input wire a_clk,
+    // input wire a_rst_n,
+    // input wire [31:0] awaddr,
+    // input wire awvalid,
+    // output logic awready,
+    // input wire [3:0] awlen,//[7:0]
+    // input wire [2:0] awsize,
+    // input wire [1:0] awburst,
+    // input wire wvalid,
+    // output logic wready,
+    // input wire wlast,
+    // input wire [63:0] wdata,
+    // input wire [7:0] wstrb,
+    // output logic bvalid,
+    // input wire bready,
+    // output logic [1:0] bresp,
+    // input wire arvalid,
+    // output logic arready,
+    // input wire [31:0] araddr,
+    // input wire [2:0] arsize,
+    // input wire [1:0] arburst,
+    // input wire [3:0] arlen,//[7:0]
+    // output logic rvalid,
+    // input wire rready,
+    // output logic rlast,
+    // output logic [63:0] rdata,
+    // output logic [1:0] rresp
     input wire a_clk,
     input wire a_rst_n,
-    input wire [31:0] awaddr,
-    input wire awvalid,
-    output logic awready,
-    input wire [3:0] awlen,//[7:0]
-    input wire [2:0] awsize,
-    input wire [1:0] awburst,
-    input wire wvalid,
-    output logic wready,
-    input wire wlast,
-    input wire [63:0] wdata,
-    input wire [7:0] wstrb,
-    output logic bvalid,
-    input wire bready,
-    output logic [1:0] bresp,
-    input wire arvalid,
-    output logic arready,
-    input wire [31:0] araddr,
-    input wire [2:0] arsize,
-    input wire [1:0] arburst,
-    input wire [3:0] arlen,//[7:0]
-    output logic rvalid,
-    input wire rready,
-    output logic rlast,
-    output logic [63:0] rdata,
-    output logic [1:0] rresp
-
+    input wire [31:0] a_awaddr,
+    input wire a_awvalid,//a_awvalid,a_AWVALID   wire
+    output logic a_awready,
+    input wire [7:0] a_awlen,//[7:0]
+    input wire [2:0] a_awsize,
+    input wire [1:0] a_awburst,
+    input wire a_wvalid,
+    output logic a_wready,
+    input wire a_wlast,
+    input wire [63:0] a_wdata,
+    input wire [7:0] a_wstrb,
+    output logic a_bvalid,
+    input wire a_bready,
+    output logic [1:0] a_bresp,
+    input wire a_arvalid,
+    output logic a_arready,
+    input wire [31:0] a_araddr,
+    input wire [2:0] a_arsize,
+    input wire [1:0] a_arburst,
+    input wire [7:0] a_arlen,//[7:0]
+    output logic a_rvalid,
+    input wire a_rready,
+    output logic a_rlast,
+    output logic [63:0] a_rdata,
+    output logic [1:0] a_rresp
     //sygnały z FSM(z FIR'a) jeszcze tu beda
 
 );
@@ -39,7 +65,7 @@ module AXI_main(
 //Parametry
 localparam Data_size_out = 16;
 localparam Address_size_out = 13;
-localparam Data_size_in = 21;
+localparam Data_size_in = 16;//21;
 localparam Address_size_out2 = 13;
 localparam Szerokosc_mux_wej = 13;
 localparam Szerokosc_mux_wyj = 13;
@@ -48,10 +74,13 @@ localparam RAM_addr_WIDTH_wej = 13;
 localparam RAM_data_WIDTH_wej = 16;
 
 localparam RAM_addr_WIDTH_wyj = 13;
-localparam RAM_data_WIDTH_wyj = 21;
+localparam RAM_data_WIDTH_wyj = 16;//21;
 
 localparam RAM_addr_WIDTH_wsp = 13;
 localparam RAM_data_WIDTH_wsp = 16;
+
+localparam WIDTH_adres_write = 14;
+localparam WIDTH_adres_read = 15;
 
 
 //----
@@ -89,42 +118,43 @@ axi #(
     .data_out_SIZE(Data_size_out),
     .address_out_SIZE(Address_size_out),
     .data_in_SIZE(Data_size_in),
-    .address_out2_SIZE(Address_size_out2)
+    .address_out2_SIZE(Address_size_out2),
+    .WIDTH_adres_write(WIDTH_adres_write),
+    .WIDTH_adres_read(WIDTH_adres_read)
 ) u_axi (
     .a_clk(a_clk),
     .a_rst_n(a_rst_n),
-    .awaddr(awaddr),
-    .awvalid(awvalid),
-    .awready(awready),
-    .awlen(awlen),
-    .awsize(awsize),
-    .awburst(awburst),
-    .wvalid(wvalid),
-    .wready(wready),
-    .wlast(wlast),
-    .wdata(wdata),
-    .wstrb(wstrb),
-    .bvalid(bvalid),
-    .bready(bready),
-    .bresp(bresp),
-    .arvalid(arvalid),
-    .arready(arready),
-    .araddr(araddr),
-    .arsize(arsize),
-    .arburst(arburst),
-    .arlen(arlen),
-    .rvalid(rvalid),
-    .rready(rready),
-    .rlast(rlast),
-    .rdata(rdata),
-    .rresp(rresp),
+    .awaddr(a_awaddr),
+    .awvalid(a_awvalid),
+    .awready(a_awready),
+    .awlen(a_awlen),
+    .awsize(a_awsize),
+    .awburst(a_awburst),
+    .wvalid(a_wvalid),
+    .wready(a_wready),
+    .wlast(a_wlast),
+    .wdata(a_wdata),
+    .wstrb(a_wstrb),
+    .bvalid(a_bvalid),
+    .bready(a_bready),
+    .bresp(a_bresp),
+    .arvalid(a_arvalid),
+    .arready(a_arready),
+    .araddr(a_araddr),
+    .arsize(a_arsize),
+    .arburst(a_arburst),
+    .arlen(a_arlen),
+    .rvalid(a_rvalid),
+    .rready(a_rready),
+    .rlast(a_rlast),
+    .rdata(a_rdata),
+    .rresp(a_rresp),
     .a_address_wr(axi_adres_zapisu),
     .a_data_out(axi_data_out),
     .a_wr(axi_wr),
     .probka(axi_probka),
     .a_address_rd(axi_address_odczytu),
-    .a_data_in(axi_data_in),
-    .state_w_out(state_w_out)//TESTOWE do usuniecia
+    .a_data_in(axi_data_in)
 );
 //MUX'y
 //MUX_AXI_wej

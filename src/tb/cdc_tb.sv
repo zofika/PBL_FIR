@@ -48,10 +48,10 @@ module tb_cdc_module;
     // Zegary
     // ==============================
     initial clk_a = 0;
-    always #5 clk_a = ~clk_a;   // 100 MHz
+    always #10 clk_a = ~clk_a;   // 100 MHz  #5
 
     initial clk_b = 0;
-    always #7 clk_b = ~clk_b;   // ~71 MHz
+    always #1 clk_b = ~clk_b;   // ~71 MHz  #7
 
     // ==============================
     // Prosta pamięć (domena B)
@@ -133,6 +133,11 @@ module tb_cdc_module;
         #100;
         $display("=== ALL TESTS PASSED ===");
         $finish;
+    end
+
+        initial begin
+        $dumpfile("cdc_tb.vcd");
+        $dumpvars(0, tb_cdc_module);
     end
 
 endmodule

@@ -7,18 +7,20 @@
 module axi#(
     parameter data_out_SIZE = 16, //rozm. danych do RAM wej.
     parameter address_out_SIZE = 13, //rozm. adresu do RAM wej.
-    parameter data_in_SIZE = 21, //rozm. danych z RAM wyj.
-    parameter address_out2_SIZE = 13 //rozm. adresu do RAM wyj.
+    parameter data_in_SIZE = 16,//21, //rozm. danych z RAM wyj.
+    parameter address_out2_SIZE = 13, //rozm. adresu do RAM wyj.
+    parameter WIDTH_adres_write = 14,
+    parameter WIDTH_adres_read = 15
 )(
     //zegar i reset
     input wire a_clk,
     input wire a_rst_n,
 
     //Kanal zapisu - adres
-    input wire [31:0] awaddr,
+    input wire [31:0] awaddr,  //14bitowy
     input wire awvalid,
     output logic awready,
-    input wire [3:0] awlen,//[7:0]
+    input wire [7:0] awlen,//[7:0]
     input wire [2:0] awsize,
     input wire [1:0] awburst,
 
@@ -37,10 +39,10 @@ module axi#(
     //Kanal odczytu - adres
     input wire arvalid,
     output logic arready,
-    input wire [31:0] araddr,
+    input wire [31:0] araddr,  //15bitowy
     input wire [2:0] arsize,
     input wire [1:0] arburst,
-    input wire [3:0] arlen,//[7:0]
+    input wire [7:0] arlen,//[7:0]
 
     //Kanal odczytu - data
     output logic rvalid,
@@ -57,29 +59,32 @@ module axi#(
     input wire [data_out_SIZE-1:0] probka,
     //RAM wyj
     output logic [address_out2_SIZE-1:0] a_address_rd,
-    input wire [data_in_SIZE-1:0] a_data_in,
+    input wire [data_in_SIZE-1:0] a_data_in
 
-    //TESTY
-    output logic [1:0] state_w_out
 );
 
 //potrzebne rejestry
-logic [address_out_SIZE-1:0] awaddr_reg; //przechowanie adresu dla bursta
-logic [3:0] awlen_reg;
+logic [WIDTH_adres_write-1:0] awaddr_reg; //przechowanie adresu dla bursta   -1
+logic [8:0] awlen_reg;
 logic [2:0] awsize_reg;
 logic [1:0] awburst_reg;
 //logic [data_out_SIZE-1:0] awdata_reg;
 
-logic [(address_out_SIZE)-1:0] araddr_reg; //+1 bo to idzie do RAM wej albo do wyj... dekoder bedzie
+logic [(WIDTH_adres_read-1):0] araddr_reg; //+1 bo to idzie do RAM wej albo do wyj    -1
 logic araddr_reg_MSB;//do wyboru
+
+logic [1:0] addr_reg_strb;
+
 logic [2:0] arsize_reg;
 logic [1:0] arbursts_reg;
-logic [3:0] arlen_reg;
+logic [8:0] arlen_reg;
 
 
 logic ram_wr_r;
-logic [address_out_SIZE-1:0] ram_addr_r;
-logic [data_out_SIZE-1:0] ram_data_r;
+logic [WIDTH_adres_write-1:0] ram_addr_r; //rejestr dod do adresu zapisu  //[address_out_SIZE-1:0]
+logic [64-1:0] ram_data_r; //logic [data_out_SIZE-1:0] ram_data_r;
+
+logic [data_out_SIZE-1:0] ram_data_probka;
 
 typedef enum logic [2:0] { 
     w_IDLE = 3'b000,
@@ -92,11 +97,12 @@ fsm_zapis state_w;
 fsm_zapis next_state_w;
 //assign state_w_out = state_w; // TEST
 
-typedef enum logic [1:0] { 
-    r_IDLE = 2'b00,
+typedef enum logic [2:0] { 
+    r_IDLE = 3'b000,
     r_DATA_handshake,
     r_DATA,
-    r_DATA_address
+    r_DATA_address,
+    r_DATA_end
 } fsm_odczyt;
 fsm_odczyt state_r;
 fsm_odczyt next_state_r;
@@ -105,13 +111,8 @@ fsm_odczyt next_state_r;
 // ----------------------------------
 //kanaly ----------------------------------
 //Zapis  //adres,data,resp
-/*
-bresp coś z tym też?(ogolnie odpowiedzi)
-co z tym size?
-awburst_reg wersje różne
-if(wlast) dodać || licznik brursta do zera.
-*/
 logic pierwszy_adres;
+logic pierwszy_adres_read;
 logic pierwszy_burst;
 always @(posedge a_clk) begin
     if(!a_rst_n) begin
@@ -131,17 +132,22 @@ always @(posedge a_clk) begin
 
         //Dostep do RAM - ZAPIS
         a_wr <= ram_wr_r;
-        a_address_wr <= ram_addr_r;//ram_addr_r;  awaddr_reg
+        a_address_wr <= ram_addr_r;//[address_out_SIZE-1:0];//ram_addr_r;  awaddr_reg
         //strobe
         //a_data_out <= ram_data_r;
-        a_data_out <= '0;
-        if(wstrb[0]) a_data_out[7:0] <= ram_data_r[7:0];
-        if(wstrb[1]) a_data_out[15:8] <= ram_data_r[15:8];
+        // a_data_out <= '0;
+        // a_data_out jest 16bitowa.
+        // master size=1 -> w strb jest tylko 1x 1.
+        if(wstrb[0] && wstrb[1]) a_data_out <= ram_data_r[15:0];
+        if(wstrb[2] && wstrb[3]) a_data_out <= ram_data_r[31:16];
+        if(wstrb[4] && wstrb[5]) a_data_out <= ram_data_r[47:32];
+        if(wstrb[6] && wstrb[7]) a_data_out <= ram_data_r[63:48];
+
 
         if(next_state_w == w_DATA_handshake) begin
-            awaddr_reg <= awaddr;// - 1'b1;  // zapisz adres
+            awaddr_reg <= awaddr[WIDTH_adres_write-1:0];// - 1'b1;  // zapisz adres
             awlen_reg <= awlen + 1'b1;
-            awsize_reg <= awsize;
+            awsize_reg <= (1<<awsize); // To jest potega 2. size=1 czyli 2^size => 2.  size = 2 czyli 2^2=>4. wsesie master wystaiwa 2 a awsize przychodzi = 1.
             awburst_reg <= awburst;
 
             pierwszy_adres <= 1'b0;
@@ -153,13 +159,14 @@ always @(posedge a_clk) begin
         if(next_state_w == w_DATA && wvalid) begin//!pierwszy_adres next_state_w == w_DATA
             pierwszy_adres <= 1'b1;
             pierwszy_burst <= 1'b1;
-            if(awburst_reg == 2'b01 ) begin //ten jeden rodzaj narazie if(awburst_reg == 2'b01) begin
-            //&& pierwszy_adres
+            if(awburst_reg == 2'b01 && pierwszy_adres) begin //ten jeden rodzaj narazie if(awburst_reg == 2'b01) begin
+            //&& pierwszy_adres  && awlen_reg != 4'b0001
                 awaddr_reg <= awaddr_reg + 1'b1;
-                
+            end else begin
+                awaddr_reg <= (awaddr_reg) ? awaddr_reg / awsize_reg : awaddr_reg;
             end
             //awdata_reg <= wdata;
-            if(awlen_reg != 4'b0000 ) begin
+            if(awlen_reg != 9'b000000000 ) begin
                 //&& pierwszy_burst
                 awlen_reg <= awlen_reg - 1'b1;
             end
@@ -197,7 +204,7 @@ always_comb begin
                 awready = 1'b1;
             next_state_w = w_DATA;
             //a_address_wr = awaddr_reg;
-            // ram_addr_r = awaddr_reg;
+            //ram_addr_r = awaddr_reg;  ///To tutaj powoduje bledy... w tescie 3
             // ram_data_r = wdata;
         end
 
@@ -215,7 +222,7 @@ always_comb begin
                 next_state_w = w_DATA;
                 //next_state_w = w_DATA_handshake;
             end
-            if(awlen_reg == 4'b0000) begin //Jeśli już to była ostatnia dana.
+            if(awlen_reg == 9'b000000000) begin //Jeśli już to była ostatnia dana.
                 next_state_w = w_END;
             end else
                 next_state_w = w_DATA;   
@@ -247,24 +254,50 @@ always @(posedge a_clk) begin
         arlen_reg <= '0;
         arsize_reg <= '0;
         arbursts_reg <= '0;
+        addr_reg_strb <= '0;
+        araddr_reg_MSB <= '0;
+
+        pierwszy_adres_read <= 1'b0;
 
         state_r <= r_IDLE;
     end else begin
         state_r <= next_state_r;
+
+        rdata <= '0;
+        case(araddr_reg[1:0])  //addr_reg_strb
+            2'b00: rdata[15:0] <= ram_data_probka; 
+            2'b01: rdata[31:16] <= ram_data_probka; 
+            2'b10: rdata[47:32] <= ram_data_probka; 
+            2'b11: rdata[63:48] <= ram_data_probka; 
+        endcase
+        // case(araddr_reg_MSB)
+        //     1'b0: begin //codzi o RAM wej
+
         if(next_state_r == r_DATA_handshake) begin
-            araddr_reg <= araddr[address_out_SIZE-1:0];
-            araddr_reg_MSB <= araddr[address_out_SIZE];
-            arlen_reg <= arlen;//0=>1 dana, 1=> 2,... + 1'b1
-            arsize_reg <= arsize;
+            araddr_reg <= araddr;//[WIDTH_adres_read-1:0];    //tylko 15 bitow///[address_out_SIZE-1:0];
+            //addr_reg_strb <= araddr[2:1]; //najmlodszy odrzucam bo tylko parzyste wchodza
+            araddr_reg_MSB <= araddr[WIDTH_adres_read-1]; //bo adresy co 2 skacza...
+            arlen_reg <= arlen + 1'b1;//0=>1 dana, 1=> 2,... + 1'b1
+            arsize_reg <= (1<<arsize);
             arbursts_reg <= arburst;
+
+            pierwszy_adres_read <= 1'b0;
         end
-        if(next_state_r == r_DATA_address /*&& rready*/) begin
+        // if(next_state_r == r_DATA && !pierwszy_adres_read) begin
             
-            if(arbursts_reg == 2'b01) begin
+        //     //araddr_reg <= (araddr_reg) ? araddr_reg / arsize_reg : araddr_reg;
+        // end
+        if(next_state_r == r_DATA_address /*&& rready*/) begin
+            pierwszy_adres_read <= 1'b1;
+            
+            if(arbursts_reg == 2'b01 && pierwszy_adres_read) begin
                 araddr_reg <= araddr_reg + 1'b1;//INC
+                //addr_reg_strb <= addr_reg_strb + 2'b10;
+            end else begin
+                araddr_reg <= (araddr_reg) ? araddr_reg / arsize_reg : araddr_reg;
             end
 
-            if(arlen_reg != 4'b0000) begin
+            if(arlen_reg != 9'b000000000) begin
                 arlen_reg <= arlen_reg - 1'b1;
             end
 
@@ -279,7 +312,9 @@ always_comb begin   //always_comb
 
     arready = 1'b0;
 
-    rdata = '0;
+    ram_data_probka = '0;
+
+    // rdata = '0;
     rlast = '0;
     rresp = 2'b10;//jakis error
     rvalid = 1'b0;
@@ -295,55 +330,52 @@ always_comb begin   //always_comb
         end
         r_DATA_handshake: begin //zapisz Adres. 1 raz
             arready = 1'b1;
-            next_state_r = r_DATA;
+            next_state_r = r_DATA_address;//r_DATA;r_DATA_address
+        end
+        r_DATA: begin 
+            //wystawiam daną.
+            case(araddr_reg_MSB)
+                1'b0: begin
+                    ram_data_probka = probka;
+                end
+                1'b1: begin
+                    ram_data_probka = a_data_in;
+                end
+            endcase
+            next_state_r = r_DATA_end; 
+        end
+        r_DATA_address: begin
+            //po odczycie przez mastera, nowy adres, czekamy 1 takt na dane z ram
+            rvalid = 1'b0;
+            //a_address_wr = araddr_reg;
+            // ram_data_probka = probka;
             case(araddr_reg_MSB)
                 1'b0: a_address_wr = araddr_reg;
                 1'b1: a_address_rd = araddr_reg;
             endcase
-            //a_address_wr = araddr_reg; //tutaj wysylam pierwszy adres juz, zeby potem odrazu moglem odczytac dana jakas.
+            next_state_r = r_DATA;
         end
-        r_DATA: begin 
-            //wystawiam daną i valid.
-            //rdata = probka;
-            case(araddr_reg_MSB)
-                1'b0: rdata = probka;
-                1'b1: rdata = a_data_in;
-            endcase
+        r_DATA_end: begin
             rvalid = 1'b1;
             rresp = 2'b00; //OKAY
-            if(arlen_reg == 4'b0000) begin //ostatnia dana juz.
+            if(arlen_reg == 9'b000000000) begin //ostatnia dana juz.
                 rlast = 1'b1;
             end
             //dane wysawione teraz czekam na ready od mastera
             if(rready) begin //jest
-                if(arlen_reg == 4'b0000) begin
+                if(arlen_reg == 9'b000000000) begin
                     next_state_r = r_IDLE;
                 end else begin
                     next_state_r = r_DATA_address;
                 end
             end else begin //nie ma
-                next_state_r = r_DATA; //petla ale bez nowego adresu
+                next_state_r = r_DATA_end; //petla ale bez nowego adresu
                 //a_address_wr = araddr_reg;
                 case(araddr_reg_MSB)
                     1'b0: a_address_wr = araddr_reg;
                     1'b1: a_address_rd = araddr_reg;
                 endcase                
             end
-            //a_address_wr = araddr_reg;//zawsze daje adres tutaj
-            case(araddr_reg_MSB)
-                1'b0: a_address_wr = araddr_reg;
-                1'b1: a_address_rd = araddr_reg;
-            endcase            
-        end
-        r_DATA_address: begin
-            //po odczycie przez mastera, nowy adres, czekamy 1 takt na dane z ram
-            rvalid = 1'b0;
-            //a_address_wr = araddr_reg;
-            case(araddr_reg_MSB)
-                1'b0: a_address_wr = araddr_reg;
-                1'b1: a_address_rd = araddr_reg;
-            endcase
-            next_state_r = r_DATA;
         end
         default: next_state_r = r_IDLE;
     endcase

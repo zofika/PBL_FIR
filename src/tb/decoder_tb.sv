@@ -78,4 +78,9 @@ module tb_decoder;
         $finish;
     end
 
+initial begin
+    $dumpfile("decoder_tb.vcd");
+    $dumpvars(0, tb_decoder);
+end
+
 endmodule

@@ -74,5 +74,9 @@ module tb_ctrl_registers;
         $display("=== CTRL REGISTERS TEST FINISHED ===");
         $finish;
     end
+initial begin
+    $dumpfile("rejestry_ster_tb.vcd");
+    $dumpvars(0, tb_ctrl_registers);
+end
 
 endmodule
