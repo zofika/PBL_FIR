@@ -81,10 +81,10 @@ module fsm (
                     next_state = D; 
 
             D:
-              if (Licznik_full)
+                if (Licznik_full)
                     next_state = KONIEC;
-          	else 
-              next_state = A;
+          	    else 
+                    next_state = A;
           
           	KONIEC: next_state = IDLE;
         endcase
@@ -95,7 +95,7 @@ module fsm (
     // ===============================
     always_comb begin
         pracuje = 0;
-      DONE    = 0;
+        DONE    = 0;
 
         FSM_MUX_wyj = 0;
         FSM_MUX_wej = 0;
