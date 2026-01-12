@@ -3,3 +3,6 @@ __pycache__/
 *.vcd
 *.fst
 *.xml
+
+
+cocotb/apb_testy/venv/
