@@ -9,6 +9,7 @@ module fsm (
 
     output logic pracuje,
     output logic DONE,
+    output logic FSM_wyj_wr,
 
 
     // ===== MUX =====
@@ -100,6 +101,7 @@ module fsm (
         FSM_MUX_wyj = 0;
         FSM_MUX_wej = 0;
         FSM_MUX_CDC = 0;
+        FSM_wyj_wr = 0;
 
         FSM_zapisz_wsp     = 0;
         FSM_petla_en       = 0;
@@ -151,11 +153,12 @@ module fsm (
                 FSM_petla_en = 0;
               	FSM_Acc_en = 0;
               	FSM_Acc_zapisz = 1;
+                FSM_wyj_wr = 1;
             end
           
           	D: begin
-                FSM_reset_Acc = 0;
-              	FSM_nowa_probka = 0; 
+                FSM_reset_Acc = 1;
+              	FSM_nowa_probka = 1; 
             end
           
            	KONIEC: begin
