@@ -2,6 +2,13 @@ from cocotb.triggers import RisingEdge
 
 from cocotb.triggers import Timer
 
+async def wait_for_pready(dut):
+        while True:
+            await RisingEdge(dut.PCLK)
+            if dut.PREADY.value == 1:
+                break
+            dut._log.debug("Waiting for PREADY...")
+
 class APBMaster:
     def __init__(self, dut):
         self.dut = dut
@@ -19,7 +26,9 @@ class APBMaster:
 
         # ACCESS
         dut.PENABLE.value = 1
-        await RisingEdge(dut.PCLK)
+
+        # Wait for PREADY
+        await wait_for_pready(dut)
 
         # IDLE
         dut.PSELx.value   = 0
@@ -38,7 +47,9 @@ class APBMaster:
 
         # ACCESS
         dut.PENABLE.value = 1
-        await RisingEdge(dut.PCLK)
+
+        # Wait for PREADY
+        await wait_for_pready(dut)
         
         # IDLE
         dut.PSELx.value   = 0
