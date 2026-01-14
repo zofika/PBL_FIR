@@ -39,6 +39,18 @@ logic FSM_Acc_en;
 logic FSM_Acc_zapisz;
 logic FSM_reset_Acc;
 
+logic [15:0] mnozenie_wynik;
+logic [15:0] Acc_out;
+logic [15:0] suma_wynik;
+localparam WIDTH = 16;
+//dod
+adder #(
+    .WIDTH(WIDTH)   // >16 bitów
+) u_adder (
+    .mnozenie_wynik(mnozenie_wynik),// IN
+    .Acc_out(Acc_out),         // IN
+    .suma_wynik(suma_wynik)        // OUT 
+);
 
 fsm u_fsm (
     .clk(clk),
@@ -88,6 +100,9 @@ initial begin
 end
 
 initial begin
+    Acc_out = 0;
+    mnozenie_wynik = 0;
+
     rst_n = 0;
     START = 0;
     Licznik_full = 0;
@@ -108,6 +123,10 @@ initial begin
     #30;
     Petla_full = 1;
     Licznik_full = 1;
+
+    #100;
+    Acc_out = 100;
+    mnozenie_wynik = 50;
 
 
     #500;
