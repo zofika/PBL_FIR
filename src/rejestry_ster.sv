@@ -17,6 +17,8 @@ module ctrl_registers (
 
     reg [15:0] rej [0:4]; // 5 rejestrów: 0=START,1=DONE,2=PRACUJE,3=ile_wsp,4=ile_probek
 
+    reg done_reg;
+
     always @(posedge clk_b or negedge rst_n) begin
         if (!rst_n) begin
             Start      <= 1'b0;
@@ -43,6 +45,17 @@ module ctrl_registers (
             Start      <= rej[0][0];     // START sygnał 1-bit
             Ile_wsp    <= rej[3][5:0];   // 6-bit
             Ile_probek <= rej[4][13:0];  // 14-bit
+
+            //Tutaj chyba musi byc cos takiego ze jak dostaniemy START = 1 to w kolejnym takcie go resetujemy?
+            // if(Start) begin
+            //     Start <= 1'b0;
+            // end
+            //to samo dla DONE jak fsm wystawi DONE (na 1 takt) to trzeba go zapisac. i reset jak START = 1.
+            // done_reg <= DONE;
+            // if(Start) begin
+                
+            // end
+            /* No czyli START i DONE trzeba jakos ogarnac */
 
             // wyjście odczytu rejestru pod nr_Rejestru
             case (nr_Rejestru)

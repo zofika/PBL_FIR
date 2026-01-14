@@ -95,12 +95,19 @@ module fsm (
     // Wyjścia FSM
     // ===============================
     always_comb begin
-        pracuje = 0;
+        //pracuje zawsze 1 - bo pracuje tylko w IDLE jest =0 bo czeka i nie pracuje
+        pracuje = 1;
+        // pracuje = 0;
         DONE    = 0;
 
-        FSM_MUX_wyj = 0;
-        FSM_MUX_wej = 0;
-        FSM_MUX_CDC = 0;
+        //muxy - zawsze na FIR skierowane, ale w IDLE do interfejsow naszych - bo zapis 
+        FSM_MUX_wyj = 1;
+        FSM_MUX_wej = 1;
+        FSM_MUX_CDC = 1;
+        // FSM_MUX_wyj = 0;
+        // FSM_MUX_wej = 0;
+        // FSM_MUX_CDC = 0;
+
         FSM_wyj_wr = 0;
 
         FSM_zapisz_wsp     = 0;

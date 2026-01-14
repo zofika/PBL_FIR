@@ -134,7 +134,7 @@ module tb_fsm_fir;
     logic FSM_nowa_shift, FSM_reset_shift;
     logic FSM_Acc_en, FSM_Acc_zapisz, FSM_reset_Acc;
 
-    fsm_fir uut (
+    fsm uut ( //fsm_fir
         .clk(clk), .rst_n(rst_n), .START(START),
         .pracuje(pracuje), .DONE(DONE), .dbg_state(dbg_state),
         .FSM_MUX_wyj(FSM_MUX_wyj), .FSM_MUX_wej(FSM_MUX_wej), .FSM_MUX_CDC(FSM_MUX_CDC),
