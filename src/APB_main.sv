@@ -22,6 +22,8 @@ module APB_main (
     input logic clk_b,
     input logic rst_n,
 
+    input logic FSM_MUX_CDC,
+
     output logic Start,
     input logic pracuje,
     input logic DONE,
@@ -56,7 +58,7 @@ logic [15:0] wsp_data; //sygnał z RAM współczynników
 //sygnały MUX_CDC_wsp
 logic [4:0] wsp_address_in; //adres do RAM współczynników
 logic [4:0] address_FIR;    //adres z FSM
-logic       FSM_MUX_CDC;    //sygnał z FSM do wyboru adresu
+//logic       FSM_MUX_CDC;    //sygnał z FSM do wyboru adresu
 
 //APB
 apb apb0(

@@ -25,6 +25,7 @@ module APB_main_tb;
     // =================================================
     // Pozostałe
     // =================================================
+    logic FSM_MUX_CDC;
     logic Start;
     logic pracuje;
     logic DONE;
@@ -53,6 +54,8 @@ module APB_main_tb;
 
         .clk_b(clk_b),
         .rst_n(rst_n),
+
+        .FSM_MUX_CDC(FSM_MUX_CDC),
 
         .Start(Start),
         .pracuje(pracuje),
@@ -148,11 +151,15 @@ module APB_main_tb;
         PRESETn  = 0;
         rst_n    = 0;
 
+        FSM_MUX_CDC = 1;
+
         PADDR    = 0;
         PSELx    = 0;
         PENABLE  = 0;
         PWRITE   = 0;
         PWDATA   = 0;
+
+        pracuje=0;
 
         rdata = 0;
 
@@ -182,6 +189,13 @@ module APB_main_tb;
             $error("Ile_probek ERROR: %0d", Ile_probek);
         else
             $display("Ile_probek OK");
+
+        // ---------------------------------------------
+        // TEST 2: zapis probek
+        // ---------------------------------------------
+        for (int i = 0; i < 16; i++) begin
+            apb_write(i, 32'd100 + i); // zapis probek do RAM
+        end
 
         // ---------------------------------------------
         // TEST 3: odczyt rejestru
