@@ -160,12 +160,13 @@ module fsm (
                 FSM_petla_en = 0;
               	FSM_Acc_en = 0;
               	FSM_Acc_zapisz = 1;
+                FSM_nowa_probka = 1; //tu
                 //FSM_wyj_wr = 1;
             end
           
           	D: begin
                 FSM_reset_Acc = 1;
-              	FSM_nowa_probka = 1; 
+              	// FSM_nowa_probka = 1; 
                 FSM_wyj_wr = 1; //tutaj jeslibez zmiany acc
             end
           

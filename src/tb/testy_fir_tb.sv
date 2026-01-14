@@ -51,18 +51,30 @@ logic [20:0] fir_probka_wynik;
 
 
 logic [5:0] wsp;
-wire [4:0] adres;
+wire [4:0] adres_FIR;
+logic [13:0] ile_probek;
+logic [12:0] adres_probki;
 
+counter_module u_counter_module (
+    .clk_b(clk),
+    .rst_n(rst_n),
+    .ile_probek(ile_probek),
+    .FSM_zapisz_probki(FSM_zapisz_probki),
+    .FSM_reset_licznik(FSM_reset_licznik), 
+    .FSM_nowa_probka(FSM_nowa_probka), 
+    .A_probki_FIR(adres_probki),
+    .licznik_full(Licznik_full)   
+);
 
 licznik_petli u_licznik_petla(
     .clk(clk),
     .rst_n(rst_n),
     .reset_petla(FSM_reset_petla),
     .petla_en(FSM_petla_en),
-    .zapisz_wsp(FSM_zapisz_probki),
+    .zapisz_wsp(FSM_zapisz_wsp),
     .wsp(wsp),
     .full(Petla_full),
-    .adres(adres)
+    .adres(adres_FIR)
 );
 
 
@@ -146,10 +158,11 @@ initial begin
     mnozenie_wynik_adder = 0;
     shift_out = 0;
     wsp_data = 0;
-    wsp = 3;
+    wsp = 3; //ile wsp
+    ile_probek = 5; // ile probek
     rst_n = 0;
     START = 0;
-    Licznik_full = 0;
+    // Licznik_full = 0;
     // Petla_full = 0;
     #10;
     shift_out = 16'b0100000000000000;  //1/4   -1/4  16'b1111000000000000;   16'b0010000000000000;
@@ -175,7 +188,7 @@ initial begin
     wsp_data = 16'b0100000000000000;   //1/2
     #10; //petla sie robi iles razy (licznik petla)
     // Petla_full = 1;
-    Licznik_full = 1;
+    // Licznik_full = 1;
 
     $display("suma wynik, %b", suma_wynik[15:0]);
     #20; //po 2 jest reset licznika petli
@@ -185,7 +198,7 @@ initial begin
 
     #30;
     // Petla_full = 1;
-    Licznik_full = 1;
+    // Licznik_full = 1;
 //=============================================
 //Liczby w u2
 //16 bitow
