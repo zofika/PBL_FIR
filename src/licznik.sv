@@ -21,7 +21,7 @@ module counter_module (
         end else begin
             // ustawienie max liczby próbek
             if (FSM_zapisz_probki)
-                max_probek <= ile_probek; //Tutaj nie ile probek a (ile probek * 2) - 1    max_probek <= ile_probek[12:0]; 
+                max_probek <= ile_probek; //Tutaj nie ile probek a (ile probek + ile wsp) - 1    max_probek <= ile_probek[12:0]; (albo to w rejestry_ster)
 
             // reset licznika
             if (FSM_reset_licznik)

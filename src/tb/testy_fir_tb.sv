@@ -55,6 +55,43 @@ wire [4:0] adres_FIR;
 logic [13:0] ile_probek;
 logic [12:0] adres_probki;
 
+
+logic [15:0] shift_in; 
+
+
+ram #(
+    .ADDR_WIDTH(5),
+    .DATA_WIDTH(16)
+) wsp_ram (
+    .clk(clk),
+    .wr(1'b0),//wr_mem
+    .adres(adres_FIR),//adres
+    .data(16'd0),
+    .data_out(wsp_data)
+);
+
+ram #(
+    .ADDR_WIDTH(13),
+    .DATA_WIDTH(16)
+) probk_ram (
+    .clk(clk),
+    .wr(1'b0),//wr_mem
+    .adres(adres_probki),//adres
+    .data(16'd0),
+    .data_out(shift_in)
+);
+
+shift_R u_shift(
+    .clk(clk),
+    .rst_n(rst_n),
+    .probka_in(shift_in),
+    .out(shift_out),
+    .nowa_shift(FSM_nowa_shift),
+    .reset_shift(FSM_reset_shift),
+    .adres(adres_FIR)
+);
+
+
 counter_module u_counter_module (
     .clk_b(clk),
     .rst_n(rst_n),
@@ -154,19 +191,36 @@ initial begin
 end
 
 initial begin
+
+    //wsp
+    wsp_ram.pamiec_RAM[0] = 16'b0100000000000000;
+    wsp_ram.pamiec_RAM[1] = 16'b0100000000000000;
+    wsp_ram.pamiec_RAM[2] = 16'b0100000000000000;
+    wsp_ram.pamiec_RAM[3] = 16'b1111111111111111;
+
+    wsp = 3; //ile wsp
+    //probki
+    probk_ram.pamiec_RAM[0] = 16'b0010000000000000;
+    probk_ram.pamiec_RAM[1] = 16'b0010000000000000;
+    probk_ram.pamiec_RAM[2] = 16'b0010000000000000;
+    probk_ram.pamiec_RAM[3] = 16'b1111111111111111;
+
+    ile_probek = 3; // ile probek
     //Acc_out = 0;
     mnozenie_wynik_adder = 0;
-    shift_out = 0;
-    wsp_data = 0;
-    wsp = 3; //ile wsp
-    ile_probek = 5; // ile probek
+    // shift_in = 0;
+    // shift_out = 0;
+    // wsp_data = 0;
+    
+    
     rst_n = 0;
     START = 0;
     // Licznik_full = 0;
     // Petla_full = 0;
     #10;
-    shift_out = 16'b0100000000000000;  //1/4   -1/4  16'b1111000000000000;   16'b0010000000000000;
-    wsp_data = 16'b0100000000000000;   //1/2  -1/2
+    // shift_out = 16'b0100000000000000;  //1/4   -1/4  16'b1111000000000000;   16'b0010000000000000;
+    // shift_in = 16'b0100000000000000;  //1/4   -1/4  16'b1111000000000000;   16'b0010000000000000;
+    // wsp_data = 16'b0100000000000000;   //1/2  -1/2
     rst_n = 1;
     #40;
     //testg
@@ -177,15 +231,18 @@ initial begin
     //albo u nas to sie dzieje jakos...
     #10;
     //start obliczen
-    shift_out = 16'b1100000000000000;   //1/4 16'b0010000000000000;    -1/4  16'b1111000000000000; 
-    wsp_data = 16'b0100000000000000;   //1/2
+    // shift_out = 16'b1100000000000000;   //1/4 16'b0010000000000000;    -1/4  16'b1111000000000000; 
+    // shift_in = 16'b1100000000000000;   //1/4 16'b0010000000000000;    -1/4  16'b1111000000000000; 
+    // wsp_data = 16'b0100000000000000;   //1/2
     $display("trestS, %b", mnozenie_wynik);
     #10;
-    shift_out = 16'b0100000000000000;  //1/4  16'b0000000000000000;
-    wsp_data = 16'b0100000000000000;   //1/2
+    // shift_out = 16'b0100000000000000;  //1/4  16'b0000000000000000;
+    // shift_in = 16'b0100000000000000;  //1/4  16'b0000000000000000;
+    // wsp_data = 16'b0100000000000000;   //1/2
     #10;
-    shift_out = 16'b0010000000000000;;  //1/4
-    wsp_data = 16'b0100000000000000;   //1/2
+    // shift_out = 16'b0010000000000000;;  //1/4
+    // shift_in = 16'b0010000000000000;;  //1/4
+    // wsp_data = 16'b0100000000000000;   //1/2
     #10; //petla sie robi iles razy (licznik petla)
     // Petla_full = 1;
     // Licznik_full = 1;
@@ -206,8 +263,9 @@ initial begin
 
     #100;
     //mno
-    shift_out = 16'b0010000000000000;  
-    wsp_data = 16'b0100000000000000;
+    // shift_in = 16'b0100000000000000;
+    //shift_out = 16'b0010000000000000;  
+    // wsp_data = 16'b0100000000000000;
 
     //dod
     //Acc_out = 21'b000000100000000000000;

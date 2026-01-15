@@ -148,7 +148,7 @@ module fsm (
 
             A: begin
                 FSM_nowa_shift = 1;
-                FSM_reset_petla = 1; 
+                // FSM_reset_petla = 1; 
             end
 
             B: begin 
@@ -168,6 +168,7 @@ module fsm (
                 FSM_reset_Acc = 1;
               	// FSM_nowa_probka = 1; 
                 FSM_wyj_wr = 1; //tutaj jeslibez zmiany acc
+                FSM_reset_petla = 1; 
             end
           
            	KONIEC: begin
