@@ -20,13 +20,13 @@ always_ff @(posedge clk) begin
         full <= '0;
     end else begin
         full <= '0;
-        if(petla_en) begin
-            if(adres == (wsp_max - 2'b10)) begin
+        if(petla_en && !full) begin
+            if(adres == (wsp_max - 1'b1)) begin
                 //koniec
                 full <= 1'b1;
                 adres <= '0;
-            end
-            adres <= adres + 1'b1;
+            end else
+                adres <= adres + 1'b1;
         end else begin
             if(zapisz_wsp) begin
                 wsp_max <= wsp; 

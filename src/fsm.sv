@@ -43,11 +43,22 @@ module fsm (
         IDLE        = 3'd0,
         START_S        = 3'd1,
         A = 3'd2,
-        B    = 3'd3,
-        C = 3'd4,
-        D  = 3'd5,
-      	KONIEC = 3'd6
+        A_2 = 3'd3,
+        B    = 3'd4,
+        C = 3'd5,
+        D  = 3'd6,
+      	KONIEC = 3'd7
     } state_t;
+
+    // typedef enum logic [2:0] {
+    //     IDLE        = 3'd0,
+    //     START_S        = 3'd1,
+    //     A = 3'd2,
+    //     B    = 3'd3,
+    //     C = 3'd4,
+    //     D  = 3'd5,
+    //   	KONIEC = 3'd6
+    // } state_t;
 
     state_t state, next_state;
  
@@ -72,6 +83,9 @@ module fsm (
                 next_state = A;
 
             A:
+                next_state = A_2;//next_state = B;
+
+            A_2:
                 next_state = B;
 
             B:
@@ -148,7 +162,12 @@ module fsm (
 
             A: begin
                 FSM_nowa_shift = 1;
+                FSM_petla_en  = 0; //tutaj troche wczesnej  1
                 // FSM_reset_petla = 1; 
+                FSM_reset_Acc = 1; //reset tutaj
+            end
+            A_2: begin
+                FSM_petla_en  = 1; //tutaj juz enabe zeby licznik w kolejnym takcie byl juz zinkrementowany bo problem z dostepem RAM jest.. wiadomo
             end
 
             B: begin 
@@ -165,7 +184,7 @@ module fsm (
             end
           
           	D: begin
-                FSM_reset_Acc = 1;
+                FSM_reset_Acc = 0;  // reset w A
               	// FSM_nowa_probka = 1; 
                 FSM_wyj_wr = 1; //tutaj jeslibez zmiany acc
                 FSM_reset_petla = 1; 

@@ -25,9 +25,12 @@ always_ff @(posedge clk) begin
             reg_shift <= {reg_shift[31:0], probka_in};//..  {probka_in, reg_shift[31:1]};//..
             // +  tutaj trzeba wypelniac na koniec zeramii... albo w ram wej beda zera albo tutaj cos wymyslec
         end
+
+        out <= reg_shift[adres];
+
     end
 end
 
-assign out = reg_shift[adres];
+// assign out = reg_shift[adres];
 
 endmodule

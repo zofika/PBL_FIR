@@ -1,8 +1,8 @@
 module adder #(
     parameter WIDTH = 21   // >16 bitów
 )(
-    input  logic [15:0] mnozenie_wynik, // IN   //[WIDTH-1:0]
-    input  logic [WIDTH-1:0] Acc_out,         // IN
+    input logic [15:0] mnozenie_wynik, // IN   //[WIDTH-1:0] logic
+    input logic [WIDTH-1:0] Acc_out,         // IN            logic
     output logic [WIDTH-1:0] suma_wynik        // OUT 
 );
     //wyn mnozenia jest 32 bity ale do adder wchodzi tylko 16 najstarszych(odpowiednich bitów)
