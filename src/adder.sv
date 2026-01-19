@@ -1,9 +1,9 @@
-module adder #(
-    parameter WIDTH = 16   // >16 bitów
+module adder_lsb #(
+    parameter WIDTH = 16
 )(
-    input  logic [WIDTH-1:0] mnozenie_wynik, // IN
-    input  logic [WIDTH-1:0] Acc_out,         // IN
-    output logic [WIDTH-1:0] suma_wynik        // OUT 
+    input  logic [WIDTH-1:0] mnozenie_wynik,
+    input  logic [WIDTH-1:0] Acc_out,
+    output logic [WIDTH-1:0] suma_wynik
 );
 
     always_comb begin
