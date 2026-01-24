@@ -26,6 +26,9 @@ COMPILE_ARGS = -g2012
 # Opcje symulatora
 SIM_ARGS = 
 
+# Zmienne środowiska dla cocotb (VCD trace)
+export COCOTB_TRACE ?= 1
+
 # Opcje cocotb
 COCOTB_RESULTS_FILE = results.xml
 COCOTB_REDUCED_LOG_FMT = 1

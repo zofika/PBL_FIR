@@ -9,7 +9,7 @@ module APB_main (
     input  logic        PRESETn,
 
     input  logic [31:0] PADDR,
-    input  logic        PSELx,
+    input  logic        PSEL,
     input  logic        PENABLE,
     input  logic        PWRITE,
     input  logic [31:0] PWDATA,
@@ -65,7 +65,7 @@ apb apb0(
     .PCLK      (PCLK     ),
     .PRESETn   (PRESETn  ),
     .PADDR     (PADDR    ),
-    .PSELx     (PSELx    ),
+    .PSEL      (PSEL     ),
     .PENABLE   (PENABLE  ),
     .PWRITE    (PWRITE   ),
     .PWDATA    (PWDATA   ),

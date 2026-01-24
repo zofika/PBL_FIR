@@ -14,7 +14,7 @@ module APB_main_tb;
     // APB sygnały
     // =================================================
     logic [31:0] PADDR;
-    logic        PSELx;
+    logic        PSEL;
     logic        PENABLE;
     logic        PWRITE;
     logic [31:0] PWDATA;
@@ -43,7 +43,7 @@ module APB_main_tb;
         .PRESETn(PRESETn),
 
         .PADDR(PADDR),
-        .PSELx(PSELx),
+        .PSEL(PSEL),
         .PENABLE(PENABLE),
         .PWRITE(PWRITE),
         .PWDATA(PWDATA),
@@ -81,7 +81,7 @@ module APB_main_tb;
             PADDR   <= addr;
             PWDATA  <= data;
             PWRITE  <= 1'b1;
-            PSELx   <= 1'b1;
+            PSEL   <= 1'b1;
             PENABLE <= 1'b0;
 
             // ACCESS
@@ -100,7 +100,7 @@ module APB_main_tb;
             join
 
             // IDLE
-            PSELx   <= 1'b0;
+            PSEL   <= 1'b0;
             PENABLE <= 1'b0;
             PWRITE  <= 1'b0;
             PADDR   <= '0;
@@ -114,7 +114,7 @@ module APB_main_tb;
             @(posedge PCLK);
             PADDR   <= addr;
             PWRITE  <= 1'b0;
-            PSELx   <= 1'b1;
+            PSEL   <= 1'b1;
             PENABLE <= 1'b0;
 
             // ACCESS
@@ -133,7 +133,7 @@ module APB_main_tb;
             join
             data = PRDATA;
             // IDLE
-            PSELx   <= 1'b0;
+            PSEL   <= 1'b0;
             PENABLE <= 1'b0;
             PADDR   <= '0;
         end
@@ -154,7 +154,7 @@ module APB_main_tb;
         FSM_MUX_CDC = 1;
 
         PADDR    = 0;
-        PSELx    = 0;
+        PSEL    = 0;
         PENABLE  = 0;
         PWRITE   = 0;
         PWDATA   = 0;
