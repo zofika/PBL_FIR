@@ -19,6 +19,7 @@ module FIR_main(
     output logic f_pracuje,
     output logic f_done,
     output logic [12:0] f_a_probki_fir,
+    output logic [12:0] f_a_probki_wyn_fir,
     output logic f_fsm_mux_wej,
     output logic f_fsm_mux_wyj,
     output logic [15:0] f_fir_probka_wynik,
@@ -90,6 +91,7 @@ counter_module u_counter_module (
     .FSM_reset_licznik(FSM_reset_licznik), 
     .FSM_nowa_probka(FSM_nowa_probka), 
     .A_probki_FIR(f_a_probki_fir),
+    .A_probki_wyn_FIR(f_a_probki_wyn_fir),
     .licznik_full(Licznik_full)   
 );
 

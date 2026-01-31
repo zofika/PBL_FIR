@@ -64,6 +64,7 @@ module AXI_main(
     input wire a_fsm_mux_wyj,
     input wire a_fsm_wyj_wr,
     input wire [12:0] a_adres_probki_fir,
+    input wire [12:0] a_adres_probki_wyn_fir,
     input wire [15:0] a_fir_probka_wynik
 );
 
@@ -175,7 +176,7 @@ multiplekser #(
 multiplekser #(
     .WIDTH(Szerokosc_mux_wyj)
 ) mux_axi_wyj (
-    .data_a(a_adres_probki_fir),//z FSM
+    .data_a(a_adres_probki_wyn_fir),//z FSM
     .data_b(axi_address_odczytu),//z axi
     .sel(a_fsm_mux_wyj),
     .data_out(probka_address_out)

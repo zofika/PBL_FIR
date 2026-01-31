@@ -55,6 +55,7 @@ wire fsm_mux_cdc; //do apb
 wire pracuje; //do apb
 wire done; //do apb
 wire [12:0] a_probki_fir; //do axi
+wire [12:0] a_probki_wyn_fir; //do axi
 wire fsm_mux_wej; //do axi
 wire fsm_mux_wyj;//do axi
 wire [15:0] fir_probka_wynik;//do axi
@@ -98,6 +99,7 @@ AXI_main u_axi(
     .a_fsm_mux_wyj(fsm_mux_wyj),
     .a_fsm_wyj_wr(fsm_wyj_wr),
     .a_adres_probki_fir(a_probki_fir),
+    .a_adres_probki_wyn_fir(a_probki_wyn_fir),
     .a_fir_probka_wynik(fir_probka_wynik)
 );
 
@@ -116,6 +118,7 @@ FIR_main u_fir(
     .f_pracuje(pracuje),
     .f_done(done),
     .f_a_probki_fir(a_probki_fir),
+    .f_a_probki_wyn_fir(a_probki_wyn_fir),
     .f_fsm_mux_wej(fsm_mux_wej),
     .f_fsm_mux_wyj(fsm_mux_wyj),
     .f_fir_probka_wynik(fir_probka_wynik),

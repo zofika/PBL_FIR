@@ -10,6 +10,9 @@ module counter_module (
     input         FSM_nowa_probka,   // inkrementacja licznika
     //tutaj ile wsp jeszce
     output reg [12:0] A_probki_FIR,  // aktualny adres próbki
+    //dla ram wyj
+    output logic [12:0] A_probki_wyn_FIR,
+
     output reg        licznik_full    // flaga osiągnięcia max
 );
     // reg [13:0] max_probek;
@@ -18,6 +21,7 @@ module counter_module (
     always @(posedge clk_b or negedge rst_n) begin
         if (!rst_n) begin
             A_probki_FIR <= 13'd0;
+            A_probki_wyn_FIR <= 13'd0;
             max_ile_razy   <= '0;
             licznik_full <= 1'b0;
         end else begin
@@ -28,6 +32,7 @@ module counter_module (
             // reset licznika
             if (FSM_reset_licznik) begin
                 A_probki_FIR <= 13'd0;
+                A_probki_wyn_FIR <= 13'd0;
                 licznik_full <= 1'b0;//reset tutaj tez
             end
             else if (FSM_nowa_probka) begin
@@ -39,6 +44,8 @@ module counter_module (
                     A_probki_FIR <= 13'd0;
                 end
             end
+            //ten asdres dla ram wyn poprostu opoxniony o 1 takt wzgledem a_probki_fir i wszystko dziala
+            A_probki_wyn_FIR <= A_probki_FIR;
         end
     end
 
