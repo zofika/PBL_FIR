@@ -99,6 +99,7 @@ cdc_module cdc_module0(
     .CDC_wr    (CDC_wr   ),
     .data_back (data_back)
 );
+
 //  DLA TESTÓW POMIJAĆ CDC
 // assign CDC_A    = p_address;
 // assign CDC_data = p_data;

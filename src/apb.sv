@@ -22,7 +22,8 @@ module apb (
     input  logic [15:0] p_data_back
 );
 
-    logic rd_waiting; //sygnał wait-state dla odczytu
+    logic [3:0] wait_state; //sygnał wait-state dla odczytu
+    ///!!!UWAGA!!! Czekamy 6 cykli na poprawne dane (przejście przez cdc)
 
     initial begin
         $dumpfile("apb_dump_cocotb.vcd");
@@ -39,7 +40,7 @@ module apb (
             p_data    <= 16'b0;
             p_wr      <= 1'b0;
 
-            rd_waiting   <= 1'b1;
+            wait_state <= 'd0;
         end else begin
             p_wr   <= 1'b0; // domyślnie 0 (impuls)
             PREADY <= 1'b0;
@@ -55,13 +56,13 @@ module apb (
             // READ 
             if (PSEL && !PWRITE && !PENABLE) begin
                 p_address <= PADDR[5:0]; //zapamiętaj adres
-            end else if (PSEL && !PWRITE && PENABLE && rd_waiting) begin
-                PREADY <= 1'b0; //niegotowy
-                rd_waiting <= 1'b0;
-            end else if (PSEL && !PWRITE && PENABLE && !rd_waiting) begin
+                wait_state <= 'd0;
+            end else if (PSEL && !PWRITE && PENABLE && wait_state != 'd5) begin
+                wait_state++;
+            end else if (PSEL && !PWRITE && PENABLE && wait_state == 'd5) begin
                 PREADY <= 1'b1; //gotowy
                 PRDATA <= {16'b0, p_data_back};
-                rd_waiting <= 1'b1;
+                wait_state <= 'd0;
             end
         end
     end
