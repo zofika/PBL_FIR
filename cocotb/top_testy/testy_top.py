@@ -150,3 +150,98 @@ async def top_test_2(dut):
 
     # assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
     pass
+
+
+async def _reset_dut(dut):
+    dut.apb_PRESETn.value = 0
+    for _ in range(5):
+        await RisingEdge(dut.apb_PCLK)
+    dut.apb_PRESETn.value = 1
+    await RisingEdge(dut.apb_PCLK)
+
+    dut.a_rst_n.value = 0
+    for _ in range(5):
+        await RisingEdge(dut.a_clk)
+    dut.a_rst_n.value = 1
+    await RisingEdge(dut.a_clk)
+
+
+async def _run_one_case(dut, apb, axi, samples, coeffs):
+    ile_probek = len(samples)
+    ile_wsp = len(coeffs)
+    out_len = ile_probek + ile_wsp - 1
+
+    # Program parameters
+    await apb.write(int(36), ile_probek)
+    for addr, c in enumerate(coeffs):
+        await apb.write(int(addr), int(c))
+    await apb.write(int(35), ile_wsp)
+
+    # Program input samples via AXI
+    await axi.write(0x0000, [int(x) for x in samples], size=2)
+
+    # Start pulse
+    await apb.write(int(32), 1)
+    await RisingEdge(dut.a_clk)
+    await apb.write(int(32), 0)
+
+    # Wait for DONE with a bounded poll loop
+    max_cycles = int(os.getenv("TOP_RANDOM_MAX_CYCLES", "5000"))
+    for _ in range(max_cycles):
+        koniec = await apb.read(int(33))
+        if int.from_bytes(koniec, byteorder="little") == 1:
+            break
+        await RisingEdge(dut.a_clk)
+    else:
+        raise AssertionError(f"Timeout waiting for DONE after {max_cycles} cycles")
+
+    # Read output samples
+    data = await axi.read(0x4000, length=out_len, size=2)
+    wyn = [to_signed_16bit(x) for x in data]
+
+    # Compare with model
+    exp = fir_hw_model([int(x) for x in samples], [int(c) for c in coeffs], ile_probek, ile_wsp)
+    assert wyn == exp, f"Mismatch: got {wyn} expected {exp} (ile_probek={ile_probek}, ile_wsp={ile_wsp})"
+
+
+@cocotb.test()
+async def top_random_test(dut):
+    """Randomized regression for the top module.
+
+    Control with env vars:
+      TOP_RANDOM_ITERS (default 10)
+      TOP_RANDOM_MAX_SAMPLES (default 16)
+      TOP_RANDOM_MAX_TAPS (default 8)
+    """
+
+    cocotb.start_soon(Clock(dut.a_clk, 10, units="ns").start())
+    cocotb.start_soon(Clock(dut.apb_PCLK, 20, units="ns").start())
+
+    bus = ApbBus(dut, "apb")
+    apb = ApbMaster(bus, dut.apb_PCLK)
+    axi = AXI4Master(dut, "a", dut.a_clk)
+
+    await _reset_dut(dut)
+
+    iters = int(os.getenv("TOP_RANDOM_ITERS", "10"))
+    max_samples = int(os.getenv("TOP_RANDOM_MAX_SAMPLES", "16"))
+    max_taps = int(os.getenv("TOP_RANDOM_MAX_TAPS", "8"))
+    value_abs = int(os.getenv("TOP_RANDOM_VALUE_ABS", "8000"))
+
+    # Make the sequence reproducible if user passes SEED
+    seed_env = os.getenv("SEED")
+    if seed_env is not None:
+        random.seed(int(seed_env))
+
+    for _i in range(iters):
+        # Optionally reset each iteration to keep the test independent
+        await _reset_dut(dut)
+
+        ile_probek = random.randint(1, max_samples)
+        ile_wsp = random.randint(1, max_taps)
+
+        # Keep magnitudes modest by default to avoid saturation/truncation corner cases.
+        samples = [random.randint(-value_abs, value_abs) for _ in range(ile_probek)]
+        coeffs = [random.randint(-value_abs, value_abs) for _ in range(ile_wsp)]
+
+        await _run_one_case(dut, apb, axi, samples, coeffs)
