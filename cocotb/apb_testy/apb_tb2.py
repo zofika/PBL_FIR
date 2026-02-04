@@ -165,13 +165,35 @@ async def test_control_registers_readback(dut):
     val_probek = int.from_bytes(raw_probek, byteorder='little') & 0xFFFF
     assert val_probek == ilosc_probek, f"Blad! Oczekiwano {ilosc_probek}, otrzymano {val_probek}"
 
-
-    #--- Specjalny przypadek: START ---
     #Rejestr START (0x20) w Twoim RTL sam się zeruje: if(rej[0][0]) rej[0][0] <= 1'b0;
     await tester.apb.write(REG_START, 0x0001)
-    
     await Timer(100, units="ns") # Czekamy aż logika clk_b go wyzeruje
-    
     raw_start = await tester.apb.read(REG_START)
     val_start = int.from_bytes(raw_start, byteorder='little') & 0xFFFF
     assert val_start == 0, "Błąd! Rejestr START nie wyzerował się automatycznie"
+
+    #REG_DONE
+    try:
+        await tester.apb.write(REG_DONE, 0x1234,error_expected=1)
+        dut._log.warning(f"Zapis do {hex(REG_DONE)} zakończony, sprawdzam czy dane NIE zostały zapisane")
+    except Exception as e:
+        # Jeśli cocotbext-apb wykryło PSLVERR, rzuci wyjątek
+        dut._log.info(f"Wykryto oczekiwany błąd transakcji APB na adresie {hex(REG_DONE)}: {e}")
+
+        # Weryfikacja: Odczytujemy i sprawdzamy czy wartość to nadal 0
+        raw_val = await tester.apb.read(REG_DONE)
+        val = int.from_bytes(raw_val, byteorder='little') & 0xFFFF
+        assert val == 0, f"Błąd! Rejestr RO pod adresem {hex(REG_DONE)} przyjął wartość!"
+
+    #REG_PRACUJE
+    try:
+        await tester.apb.write(REG_PRACUJE, 0x1234,error_expected=1)
+        dut._log.info(f"Zapis do {hex(REG_PRACUJE)} zakończony, sprawdzam czy dane NIE zostały zapisane")
+    except Exception as e:
+        # Jeśli cocotbext-apb wykryło PSLVERR, rzuci wyjątek
+        dut._log.info(f"Wykryto oczekiwany błąd transakcji APB na adresie {hex(REG_PRACUJE)}: {e}")
+
+        # Weryfikacja: Odczytujemy i sprawdzamy czy wartość to nadal 0
+        raw_val = await tester.apb.read(REG_PRACUJE)
+        val = int.from_bytes(raw_val, byteorder='little') & 0xFFFF
+        assert val == 0, f"Błąd! Rejestr RO pod adresem {hex(REG_PRACUJE)} przyjął wartość!" # Zakładamy, że wejścia DONE i Pracuje są w stanie 0

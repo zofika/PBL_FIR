@@ -30,27 +30,32 @@ module apb (
         $dumpvars(0, apb);
     end
 
-    assign PSLVERR = 1'b0; // Brak błędów slave
-
     always_ff @(posedge PCLK or negedge PRESETn) begin
         if (!PRESETn) begin
             PRDATA    <= 32'b0;
             PREADY    <= 1'b0;
+            PSLVERR   <= 1'b0;
             p_address <= 6'b0;
             p_data    <= 16'b0;
             p_wr      <= 1'b0;
-
+        
             wait_state <= 'd0;
         end else begin
-            p_wr   <= 1'b0; // domyślnie 0 (impuls)
-            PREADY <= 1'b0;
+            p_wr    <= 1'b0; // domyślnie 0 (impuls)
+            PREADY  <= 1'b0;
+            PSLVERR <= 1'b0; // Brak błędów slave
             
             // WRITE without wait state, T2 (access phase)
             if (PSEL && PWRITE && !PENABLE) begin
-                p_address <= PADDR[5:0];
-                p_data    <= PWDATA[15:0];
-                PREADY    <= 1'b1; //dane przyjęte
-                p_wr      <= 1'b1; //impuls zapisu
+                if(PADDR == 'h21 || PADDR == 'h22) begin //REG_DONE = 0x21, REG_PRACUJE = 0x22 
+                    PREADY <= 1'b1; //gotowy
+                    PSLVERR <= 1'b1; //BLAD zapis do rejestrow RO
+                end else begin
+                    p_address <= PADDR[5:0];
+                    p_data    <= PWDATA[15:0];
+                    PREADY    <= 1'b1; //dane przyjęte
+                    p_wr      <= 1'b1; //impuls zapisu
+                end
             end
 
             // READ 
