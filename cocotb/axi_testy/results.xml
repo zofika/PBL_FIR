@@ -1,11 +1,11 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1770025947" />
-    <testcase name="axi_test_1" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="16" time="0.013391494750976562" sim_time_ns="150.001" ratio_time="11201.214113089303" />
-    <testcase name="axi_test_2" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="56" time="0.006375312805175781" sim_time_ns="160.001" ratio_time="25096.964633657444" />
-    <testcase name="axi_test_3" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="101" time="0.2188429832458496" sim_time_ns="11050.001" ratio_time="50492.827488036746" />
-    <testcase name="axi_test_4" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="143" time="0.17576956748962402" sim_time_ns="10360.001" ratio_time="58940.81181380599" />
-    <testcase name="axi_test_5" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="184" time="0.28168797492980957" sim_time_ns="110.0010000000002" ratio_time="390.50655260456193" />
-    <testcase name="axi_test_6" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="223" time="0.23566818237304688" sim_time_ns="14150.001" ratio_time="60042.050893410385" />
+    <property name="random_seed" value="1770286393" />
+    <testcase name="axi_test_1" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="16" time="0.01258707046508789" sim_time_ns="150.001" ratio_time="11917.07001371368" />
+    <testcase name="axi_test_2" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="56" time="0.005056619644165039" sim_time_ns="160.001" ratio_time="31641.8894952143" />
+    <testcase name="axi_test_3" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="101" time="0.2172534465789795" sim_time_ns="11050.001" ratio_time="50862.258684503424" />
+    <testcase name="axi_test_4" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="143" time="0.17291021347045898" sim_time_ns="10360.001" ratio_time="59915.49482280851" />
+    <testcase name="axi_test_5" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="184" time="0.27141475677490234" sim_time_ns="110.0010000000002" ratio_time="405.28746965379435" />
+    <testcase name="axi_test_6" classname="test_axi" file="/home/lukas/PBL_projekt_github/PBL_FIR/cocotb/axi_testy/test_axi.py" lineno="223" time="0.23020386695861816" sim_time_ns="14150.001" ratio_time="61467.260246082784" />
   </testsuite>
 </testsuites>
