@@ -4,12 +4,16 @@ import argparse
 import shutil
 from pathlib import Path
 
-from cocotb_tools.runner import get_runner
+from cocotb.runner import get_runner
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run cocotb tests for pbl_TOP")
-    parser.add_argument("--testcase", default=os.getenv("TESTCASE"), help="Testcase name, e.g. top_test_1")
+    parser.add_argument(
+        "--testcase",
+        default=os.getenv("TESTCASE"),
+        help="Testcase name, e.g. top_test_1",
+    )
     parser.add_argument(
         "--waves",
         action="store_true",

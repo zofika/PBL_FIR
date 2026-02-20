@@ -1,7 +1,8 @@
 import sys
 import os
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
-sys.path.insert(0,PROJECT_ROOT)
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+sys.path.insert(0, PROJECT_ROOT)
 
 import cocotb
 from cocotb.clock import Clock
@@ -20,16 +21,18 @@ from cocotbext.apb import ApbMaster, ApbBus
 
 ##################################################################
 
+
 def to_signed_16bit(obj):
-    raw = int(obj.value) 
+    raw = int(obj.value)
     if raw > 32767:
         return raw - 65536
     return raw
 
+
 @cocotb.test()
 async def top_test_1(dut):
     # TEST 1
-    # 
+    #
     # 1.zapis probek AXI
     # 1.1. odczyt probek AXI
     # 2. zapis wsp APB
@@ -40,17 +43,17 @@ async def top_test_1(dut):
     # 6. odczyt DONE APB
     # 7. odczyt probek wyn AXI
     # 8. porowanie z modelemFIR.
-#==============================================================================
+    # ==============================================================================
 
     cocotb.start_soon(Clock(dut.a_clk, 10, units="ns").start())
-    #zegar dla apb - wolniejszy
+    # zegar dla apb - wolniejszy
     cocotb.start_soon(Clock(dut.apb_PCLK, 20, units="ns").start())
 
     # APB bus + master - use wrapper to map signals
     bus = ApbBus(dut, "apb")
     apb = ApbMaster(bus, dut.apb_PCLK)
 
-    #resety
+    # resety
     dut.apb_PRESETn.value = 0
     for _ in range(5):
         await RisingEdge(dut.apb_PCLK)
@@ -63,8 +66,8 @@ async def top_test_1(dut):
     dut.a_rst_n.value = 1
 
     # APB - wsp, parametry
-    ile_probek = 5 #4
-    #100100
+    ile_probek = 5  # 4
+    # 100100
     write_task = cocotb.start_soon(apb.write(int(36), ile_probek))
     # dut.u_fir.f_ile_probek.value = ile_probek
     # wsp = [16384, 16384]  #1/2 1/2
@@ -73,35 +76,47 @@ async def top_test_1(dut):
     write_task = cocotb.start_soon(apb.write(int(1), -32768))
     ile_wsp = 2
     # dut.u_fir.f_ile_wsp.value = ile_wsp
-    #100011
+    # 100011
     write_task = cocotb.start_soon(apb.write(int(35), ile_wsp))
     ile_razy = ile_probek + ile_wsp - 1
     # dut.u_fir.f_ile_razy.value = ile_razy #zeby nie bylo -1....
 
-    #apb odczyt wsp. ile_probek, ile_wsp
+    # apb odczyt wsp. ile_probek, ile_wsp
     data_apb = []
-    await ReadOnly() 
-    data_apb.append(int.from_bytes(await apb.read(0x00), byteorder="little", signed=True))
-    await ReadOnly() 
-    data_apb.append(int.from_bytes(await apb.read(0x01), byteorder="little", signed=True))
-    #spr
-    raw = int(data_apb[0]) 
+    await ReadOnly()
+    data_apb.append(
+        int.from_bytes(await apb.read(0x00), byteorder="little", signed=True)
+    )
+    await ReadOnly()
+    data_apb.append(
+        int.from_bytes(await apb.read(0x01), byteorder="little", signed=True)
+    )
+    # spr
+    raw = int(data_apb[0])
     if raw > 32767:
-        data_apb[0] =  raw - 65536
-    raw = int(data_apb[1]) 
+        data_apb[0] = raw - 65536
+    raw = int(data_apb[1])
     if raw > 32767:
-        data_apb[1] =  raw - 65536
+        data_apb[1] = raw - 65536
 
     assert data_apb == wsp, f"Odczytane wsp z apb {data_apb} != oczekiwana {wsp}"
     data_apb_ile_probek = []
     data_apb_ile_wsp = []
-    await ReadOnly() 
-    data_apb_ile_probek = (int.from_bytes(await apb.read(36), byteorder="little", signed=True))
-    await ReadOnly() 
-    data_apb_ile_wsp = (int.from_bytes(await apb.read(35), byteorder="little", signed=True))
+    await ReadOnly()
+    data_apb_ile_probek = int.from_bytes(
+        await apb.read(36), byteorder="little", signed=True
+    )
+    await ReadOnly()
+    data_apb_ile_wsp = int.from_bytes(
+        await apb.read(35), byteorder="little", signed=True
+    )
 
-    assert data_apb_ile_probek == ile_probek, f"Odczytane ileprobek z apb {data_apb_ile_probek} != oczekiwana {ile_probek}"
-    assert data_apb_ile_wsp == ile_wsp, f"Odczytane ilewsp z apb {data_apb_ile_wsp} != oczekiwana {ile_wsp}"
+    assert (
+        data_apb_ile_probek == ile_probek
+    ), f"Odczytane ileprobek z apb {data_apb_ile_probek} != oczekiwana {ile_probek}"
+    assert (
+        data_apb_ile_wsp == ile_wsp
+    ), f"Odczytane ilewsp z apb {data_apb_ile_wsp} != oczekiwana {ile_wsp}"
 
     # AXI
     # dut.a_rst_n.value = 0
@@ -112,78 +127,81 @@ async def top_test_1(dut):
     axi = AXI4Master(dut, "a", dut.a_clk)
 
     # AXI zapis probek
-    adres = 0x0000       
-    N = 5  
+    adres = 0x0000
+    N = 5
     # zapisane_dane = [-1000, -2000, -3000, -4000, 0, 0, 0] #probki
     zapisane_dane = [1000, 2000, 3000, 2000, 1000]
-    await axi.write(adres, zapisane_dane, size = 2)
+    await axi.write(adres, zapisane_dane, size=2)
 
-    #axi odczyt zapisanyc probek
+    # axi odczyt zapisanyc probek
     data_spr_probek = []
     data_spr_probek_wyn = []
-    data_spr_probek = await axi.read(adres,length=N, size = 2)
+    data_spr_probek = await axi.read(adres, length=N, size=2)
     for x in data_spr_probek:
         data_spr_probek_wyn.append(to_signed_16bit(x))
-    assert data_spr_probek_wyn == zapisane_dane, f"Odczytana próbka {data_spr_probek_wyn} != oczekiwana {zapisane_dane}"
+    assert (
+        data_spr_probek_wyn == zapisane_dane
+    ), f"Odczytana próbka {data_spr_probek_wyn} != oczekiwana {zapisane_dane}"
 
     # APB - start
 
     for _ in range(5):
         await RisingEdge(dut.a_clk)
     # dut.u_fir.f_start.value = 0 #1  # start
-    #100000
+    # 100000
     write_task = cocotb.start_soon(apb.write(int(32), 1))
     for _ in range(1):
         await RisingEdge(dut.a_clk)
     # dut.u_fir.f_start.value = 0
 
     # FIR
-    
-    while(1):
+
+    while 1:
         # if(dut.u_fir.f_done == 1): break
-        koniec = await apb.read(int(33)) #
-        if(int.from_bytes(koniec, byteorder="little") == 1): break
+        koniec = await apb.read(int(33))  #
+        if int.from_bytes(koniec, byteorder="little") == 1:
+            break
         print("liczy dalej")
         # dut.u_fir.f_wsp_data.value = wsp[int(dut.u_fir.f_adress_fir)]  # to bedzie z apb
 
         # dut.f_probka.value = probki[int(dut.f_a_probki_fir)  - to juz z axi jest
-        # if(dut.f_fsm_wyj_wr == 1): 
+        # if(dut.f_fsm_wyj_wr == 1):
         #     wyn.append(to_signed_16bit(dut.f_fir_probka_wynik))  - to juz tez z axi jest
         await RisingEdge(dut.a_clk)  # narazie to potrzebne dla wsp tylko...
     print("koniec")
     # FIR (jak juz bedzie APB to nawet teo nie bedzie - z apb bedzie odczyt poprostu czy juz jest DONE w petli.
 
-
     # AXI odczyt wyniku
-    adres = 0x4000 # adres sie zmienia
+    adres = 0x4000  # adres sie zmienia
     wyn = []
-    data = await axi.read(adres,length=6, size = 2)
+    data = await axi.read(adres, length=6, size=2)
     for x in data:
         wyn.append(to_signed_16bit(x))
 
     # modelFIR
     y = fir_hw_model(zapisane_dane, wsp, ile_probek, ile_wsp)
-    print("wynik: ",wyn)
-    print("z modelu: ",y)
+    print("wynik: ", wyn)
+    print("z modelu: ", y)
     assert wyn == y, f"Odczytana próbka {wyn} != oczekiwana {y}"
     pass
+
 
 @cocotb.test()
 async def top_test_2(dut):
     # TEST 2
-    # 
+    #
     # To samo co w TEST 1 ale dwa razy... czyli jak raz sie zrobi to zmiana wsp/probek i odpalenie.
-#==============================================================================
+    # ==============================================================================
 
     cocotb.start_soon(Clock(dut.a_clk, 10, units="ns").start())
-    #zegar dla apb - wolniejszy
+    # zegar dla apb - wolniejszy
     cocotb.start_soon(Clock(dut.apb_PCLK, 20, units="ns").start())
 
     # APB bus + master - use wrapper to map signals
     bus = ApbBus(dut, "apb")
     apb = ApbMaster(bus, dut.apb_PCLK)
 
-    #resety
+    # resety
     dut.apb_PRESETn.value = 0
     for _ in range(5):
         await RisingEdge(dut.apb_PCLK)
@@ -197,7 +215,7 @@ async def top_test_2(dut):
 
     # APB - wsp, parametry
     ile_probek = 4
-    #100100
+    # 100100
     write_task = cocotb.start_soon(apb.write(int(36), ile_probek))
     wsp = [0, -32768]
     write_task = cocotb.start_soon(apb.write(int(0), 0))
@@ -208,10 +226,10 @@ async def top_test_2(dut):
 
     axi = AXI4Master(dut, "a", dut.a_clk)
     # AXI zapis probek
-    adres = 0x0000       
-    N = 5  
+    adres = 0x0000
+    N = 5
     zapisane_dane = [1000, 2000, 3000, 4000, 0]
-    await axi.write(adres, zapisane_dane, size = 2)
+    await axi.write(adres, zapisane_dane, size=2)
 
     # APB - start
     for _ in range(5):
@@ -221,31 +239,32 @@ async def top_test_2(dut):
         await RisingEdge(dut.a_clk)
 
     # FIR
-    while(1):
-        koniec = await apb.read(int(33)) #
-        if(int.from_bytes(koniec, byteorder="little") == 1): break
+    while 1:
+        koniec = await apb.read(int(33))  #
+        if int.from_bytes(koniec, byteorder="little") == 1:
+            break
         print("liczy dalej")
         await RisingEdge(dut.a_clk)
     print("koniec")
 
     # AXI odczyt wyniku
-    adres = 0x4000 # adres sie zmienia
+    adres = 0x4000  # adres sie zmienia
     wyn = []
-    data = await axi.read(adres,length=ile_razy, size = 2)
+    data = await axi.read(adres, length=ile_razy, size=2)
     for x in data:
         wyn.append(to_signed_16bit(x))
 
     # modelFIR
     y = fir_hw_model(zapisane_dane, wsp, ile_probek, ile_wsp)
-    print("wynik: ",wyn)
-    print("z modelu: ",y)
+    print("wynik: ", wyn)
+    print("z modelu: ", y)
     assert wyn == y, f"Odczytana wynik {wyn} != oczekiwana {y}"
 
-    #2 runda
+    # 2 runda
 
     # APB - wsp, parametry
     ile_probek = 4
-    #100100
+    # 100100
     write_task = cocotb.start_soon(apb.write(int(36), ile_probek))
     wsp = [16384, 16384]
     write_task = cocotb.start_soon(apb.write(int(0), 16384))
@@ -253,11 +272,11 @@ async def top_test_2(dut):
     ile_wsp = 2
     write_task = cocotb.start_soon(apb.write(int(35), ile_wsp))
     ile_razy = ile_probek + ile_wsp - 1
-  
-# AXI zapis probek
-    adres = 0x0000       
+
+    # AXI zapis probek
+    adres = 0x0000
     zapisane_dane = [-1000, -2000, -3000, -4000, 0, 0, 0]
-    await axi.write(adres, zapisane_dane, size = 2)
+    await axi.write(adres, zapisane_dane, size=2)
     # APB - start
     for _ in range(5):
         await RisingEdge(dut.a_clk)
@@ -265,22 +284,23 @@ async def top_test_2(dut):
     for _ in range(1):
         await RisingEdge(dut.a_clk)
     # FIR
-    while(1):
-        koniec = await apb.read(int(33)) #
-        if(int.from_bytes(koniec, byteorder="little") == 1): break
+    while 1:
+        koniec = await apb.read(int(33))  #
+        if int.from_bytes(koniec, byteorder="little") == 1:
+            break
         print("liczy dalej")
         await RisingEdge(dut.a_clk)
     print("koniec")
     # AXI odczyt wyniku
-    adres = 0x4000 # adres sie zmienia
+    adres = 0x4000  # adres sie zmienia
     wyn = []
-    data = await axi.read(adres,length=ile_razy, size = 2)
+    data = await axi.read(adres, length=ile_razy, size=2)
     for x in data:
         wyn.append(to_signed_16bit(x))
     # modelFIR
     y = fir_hw_model(zapisane_dane, wsp, ile_probek, ile_wsp)
-    print("wynik runda 2: ",wyn)
-    print("z modelu runda 2: ",y)
+    print("wynik runda 2: ", wyn)
+    print("z modelu runda 2: ", y)
     assert wyn == y, f"Odczytana wynik {wyn} != oczekiwana {y}"
     pass
 
@@ -331,10 +351,15 @@ async def _run_one_case(dut, apb, axi, samples, coeffs):
     # Read output samples
     data = await axi.read(0x4000, length=out_len, size=2)
     wyn = [to_signed_16bit(x) for x in data]
+    print(f"Got output: {wyn}")
 
     # Compare with model
-    exp = fir_hw_model([int(x) for x in samples], [int(c) for c in coeffs], ile_probek, ile_wsp)
-    assert wyn == exp, f"Mismatch: got {wyn} expected {exp} (ile_probek={ile_probek}, ile_wsp={ile_wsp})"
+    exp = fir_hw_model(
+        [int(x) for x in samples], [int(c) for c in coeffs], ile_probek, ile_wsp
+    )
+    assert (
+        wyn == exp
+    ), f"Mismatch: got {wyn} expected {exp} (ile_probek={ile_probek}, ile_wsp={ile_wsp})"
 
 
 @cocotb.test()
