@@ -95,8 +95,10 @@ async def fir_test_1(dut):
     print("read data:", wyn)
 
     dsp.compare_responses(probki, y, wyn)
+    delay = dsp.compute_delay(y, wyn, wsp)
 
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
+    assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
     pass
 
 
@@ -156,8 +158,12 @@ async def fir_test_2(dut):
 
     dsp.compare_responses(probki, y, wyn)
     delay = dsp.compute_delay(y, wyn, wsp)
+    tau, group_delay = dsp.compute_group_delay(wsp)
+
+    print(f"Średnie późnienie grupowe: {group_delay:.2f} próbek")
 
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
+    assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
 
     pass
 
@@ -226,8 +232,10 @@ async def fir_test_3(dut):
     print("read data:", wyn)
 
     dsp.compare_responses(probki, y, wyn)
+    delay = dsp.compute_delay(y, wyn, wsp)
 
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
+    assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
     pass
 
 
@@ -286,8 +294,10 @@ async def fir_test_4(dut):
     print("read data:", wyn)
 
     dsp.compare_responses(probki, y, wyn)
+    delay = dsp.compute_delay(y, wyn, wsp)
 
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
+    assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
     pass
 
 
@@ -352,8 +362,10 @@ async def fir_test_5(dut):
     # print("read data:", wyn)
 
     dsp.compare_responses(probki, y, wyn)
+    delay = dsp.compute_delay(y, wyn, wsp)
 
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
+    assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
     pass
 
 
@@ -371,8 +383,16 @@ async def fir_test_6(dut):
         0
     ] * 15  # impuls jednostkowy, wartość 1 dla pierwszej próbki sygnału i 0 dla reszty próbek
     dut.f_ile_wsp.value = len(wsp)
-    dut.f_ile_razy.value = len(probki) + len(wsp) - 1  # zeby nie bylo -1....
+
+    ile_razy = len(probki) + len(wsp) - 1
+
+    dut.f_ile_razy.value = ile_razy  # zeby nie bylo -1....
+
+    # padding
+    probki = probki + [0] * (ile_razy - len(probki))
+
     y = fir_hw_model(probki, wsp, len(probki), len(wsp))
+    y = y[:ile_razy]
 
     wyn = []
 
@@ -414,8 +434,10 @@ async def fir_test_6(dut):
 
     dsp.impulse_response_diagram(wyn, label="FIR")
     dsp.impulse_response_diagram(y, label="Golden Model")
+    delay = dsp.compute_delay(y, wyn, wsp)
 
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
+    assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
     pass
 
 
@@ -428,7 +450,8 @@ async def fir_test_7(dut):
 
     # 1.
     # probki = [1000, -2000, 3000, -4000, 0]
-    t, sine_wave = dsp.sinus_generator(f_sin=5, N=32)
+    N = 32
+    t, sine_wave = dsp.sinus_generator(f_sin=5, N=N)
     dut.f_ile_probek.value = len(sine_wave)
     wsp = [
         8192,
@@ -437,8 +460,16 @@ async def fir_test_7(dut):
         8192,
     ]  # jakies wspolczynniki, 0.25, 0.5, 0.5, 0.25 w Q1.15
     dut.f_ile_wsp.value = len(wsp)
-    dut.f_ile_razy.value = len(sine_wave) + len(wsp) - 1  # zeby nie bylo -1....
+
+    ile_razy = len(sine_wave) + len(wsp) - 1
+    dut.f_ile_razy.value = ile_razy  # zeby nie bylo -1....
+
+    # padding
+    sine_wave = list(sine_wave) + [0] * (ile_razy - len(sine_wave))
+
     y = fir_hw_model(sine_wave, wsp, len(sine_wave), len(wsp))
+    y = [int(x) for x in y]
+    y = y[:ile_razy]
 
     wyn = []
 
@@ -466,7 +497,7 @@ async def fir_test_7(dut):
         # print("addres fir", int(dut.f_adress_fir))
         dut.f_wsp_data.value = wsp[int(dut.f_adress_fir)]
         # print("xd")
-        dut.f_probka.value = sine_wave[int(dut.f_a_probki_fir)]
+        dut.f_probka.value = int(sine_wave[int(dut.f_a_probki_fir)])
         if dut.f_fsm_wyj_wr == 1:
             wyn.append(to_signed_16bit(dut.f_fir_probka_wynik))
             # print("wynik", to_signed_16bit(dut.f_fir_probka_wynik))
@@ -478,8 +509,10 @@ async def fir_test_7(dut):
     print(len(wyn))
     print("read data:", wyn)
 
-    dsp.sinus_response_diagram(t, sine_wave, wyn, label="FIR")
-    dsp.sinus_response_diagram(t, sine_wave, y, label="Golden Model")
+    dsp.sinus_response_diagram(t, N, sine_wave, wyn, label="FIR")
+    dsp.sinus_response_diagram(t, N, sine_wave, y, label="Golden Model")
+    delay = dsp.compute_delay(y, wyn, wsp)
 
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
+    assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
     pass

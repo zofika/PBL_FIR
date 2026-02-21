@@ -13,7 +13,7 @@ class DSPfirTests:
         plt.xlabel("n")
         plt.ylabel("y[n]")
         plt.grid(True)
-        plt.savefig("impulse_response_diagram.png")
+        plt.savefig(f"impulse_response_diagram_{label}.png")
         plt.close()
 
     def sinus_generator(self, f_sin=5, N=32):
@@ -21,17 +21,16 @@ class DSPfirTests:
         sine_wave = np.round(32767 * np.sin(2 * np.pi * f_sin * t / N)).astype(int)
         return t, sine_wave
 
-    def sinus_response_diagram(self, t, sine_wave, y_wyn, label=None):
+    def sinus_response_diagram(self, t, N, sine_wave, y_wyn, label=None):
         # Plot the sinusoidal response
-        t_out = np.arange(len(y_wyn))
 
         plt.figure()
-        plt.plot(t, sine_wave, label="Wejście (sin)")
-        plt.plot(t_out, y_wyn, label=f"Wyjście filtru {label}")
+        plt.plot(t, sine_wave[:N], label="Wejście (sin)")
+        plt.plot(t, y_wyn[:N], label=f"Wyjście filtru {label}")
+        plt.legend(loc="lower right")
         plt.title("Odpowiedź FIR na sinusoidę")
         plt.xlabel("n")
         plt.ylabel("Amplituda")
-        plt.legend()
         plt.grid(True)
         plt.savefig(f"sinus_response_diagram_of_{label}.png")
         plt.close()
@@ -99,8 +98,8 @@ class DSPfirTests:
             plt.figure()
             plt.plot(t_in, probki, label="Wejście")
             plt.plot(t_out, wyn, label="Wyjście FIR")
+            plt.legend(loc="lower right")
             plt.title("FIR Projekt == Referencyjny")
-            plt.legend()
             plt.grid()
             plt.savefig("filter_response_diagram.png")
             plt.close()
@@ -109,9 +108,9 @@ class DSPfirTests:
             plt.figure()
             plt.plot(t_in, probki, label="Wejście")
             plt.plot(t_out, y, label="Wyjście Referencyjne")
+            plt.legend(loc="lower right")
             plt.plot(t_out, wyn, label="Wyjście FIR")
             plt.title("FIR Projekt != Referencyjny")
-            plt.legend()
             plt.grid()
             plt.savefig("filter_response_diagram.png")
             plt.close()
