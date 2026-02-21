@@ -160,7 +160,9 @@ async def fir_test_2(dut):
     delay = dsp.compute_delay(y, wyn, wsp)
     tau, group_delay = dsp.compute_group_delay(wsp)
 
-    print(f"Średnie późnienie grupowe: {group_delay:.2f} próbek")
+    print(
+        f"Średnie późnienie grupowe: {group_delay:.2f} próbek dla współczynników {wsp}"
+    )
 
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
     assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
@@ -433,16 +435,16 @@ async def fir_test_6(dut):
     print(len(wyn))
     print("read data:", wyn)
     print(
-        f"Odczytany wynik zwraca współczynniki FIR pomniejszone o 1: wynik z pominięciem zer {wyn[:len(wsp)]} != oczekiwana {wsp}"
+        f"Odczytany wynik zwraca współczynniki FIR pomniejszone o 1: wynik z pominięciem zer {wyn[:len(wsp)]} != współczynniki {wsp}"
     )
 
     dsp.impulse_response_diagram(wyn, label="FIR")
-    dsp.impulse_response_diagram(y, label="Golden Model")
+    dsp.impulse_response_diagram(y, label="Golden_Model")
     delay = dsp.compute_delay(y, wyn, wsp)
 
     assert [
         x + 1 for x in wyn[: len(wsp)]
-    ] == wsp, f"Odczytany wynik zwraca współczynniki FIR pomniejszone o 1: wynik z pominięciem zer {wyn[:len(wsp)]} != oczekiwana {wsp}"
+    ] == wsp, f"Odczytany wynik zwraca współczynniki FIR pomniejszone o 1: wynik z pominięciem zer {wyn[:len(wsp)]} != współczynniki {wsp}"
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
     assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
     pass
@@ -521,7 +523,7 @@ async def fir_test_7(dut):
     )  # charakterystyka amplitudowa i fazowa
 
     dsp.sinus_response_diagram(t, N, sine_wave, wyn, label="FIR")
-    dsp.sinus_response_diagram(t, N, sine_wave, y, label="Golden Model")
+    dsp.sinus_response_diagram(t, N, sine_wave, y, label="Golden_Model")
     delay = dsp.compute_delay(y, wyn, wsp)
 
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
