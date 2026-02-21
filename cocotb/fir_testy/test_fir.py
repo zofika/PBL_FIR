@@ -377,12 +377,13 @@ async def fir_test_6(dut):
     cocotb.start_soon(Clock(dut.clk, 10, units="ns").start())
 
     # 1.
-    probki = [1000, -2000, 3000, -4000, 0]
-    dut.f_ile_probek.value = len(probki)
-    wsp = [32767] + [
+    wsp = [10923, 10923, 10921]  # 1/3 1/3 1/3 w Q1.15
+    dut.f_ile_wsp.value = len(wsp)
+    probki = [32767] + [
         0
     ] * 15  # impuls jednostkowy, wartość 1 dla pierwszej próbki sygnału i 0 dla reszty próbek
-    dut.f_ile_wsp.value = len(wsp)
+
+    dut.f_ile_probek.value = len(probki)
 
     ile_razy = len(probki) + len(wsp) - 1
 
@@ -431,11 +432,17 @@ async def fir_test_6(dut):
     print("wynik z modelu:", y)
     print(len(wyn))
     print("read data:", wyn)
+    print(
+        f"Odczytany wynik zwraca współczynniki FIR pomniejszone o 1: wynik z pominięciem zer {wyn[:len(wsp)]} != oczekiwana {wsp}"
+    )
 
     dsp.impulse_response_diagram(wyn, label="FIR")
     dsp.impulse_response_diagram(y, label="Golden Model")
     delay = dsp.compute_delay(y, wyn, wsp)
 
+    assert [
+        x + 1 for x in wyn[: len(wsp)]
+    ] == wsp, f"Odczytany wynik zwraca współczynniki FIR pomniejszone o 1: wynik z pominięciem zer {wyn[:len(wsp)]} != oczekiwana {wsp}"
     assert y == wyn, f"Odczytany wynik {wyn} != oczekiwana {y}"
     assert int(delay) == 0, f"Opóźnienie {delay} pomiędzy modelami jest różne od 0"
     pass
@@ -508,6 +515,10 @@ async def fir_test_7(dut):
     print("wynik z modelu:", y)
     print(len(wyn))
     print("read data:", wyn)
+
+    dsp.frequency_response_diagram(
+        wsp, label="FIR_TEST7"
+    )  # charakterystyka amplitudowa i fazowa
 
     dsp.sinus_response_diagram(t, N, sine_wave, wyn, label="FIR")
     dsp.sinus_response_diagram(t, N, sine_wave, y, label="Golden Model")
