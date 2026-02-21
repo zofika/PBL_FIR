@@ -73,14 +73,20 @@ class DSPfirTests:
         corr = np.correlate(wyn, y, mode="full")
         delay = np.argmax(corr) - (len(y) - 1)
 
-        if delay == 0:
-            print(f"Liczę opóźnienie grupowe")
-            w, f, H = self.frequency_response(coeffs)
-            phase = np.angle(H)
-            delay = -np.gradient(phase, w)
-        else:
-            print(f"Opóźnienie czasowe: {delay} próbek pomiędzy modelami filtrów")
+        print(f"Opóźnienie czasowe: {delay} próbek pomiędzy modelami filtrów")
+
         return delay
+
+    def compute_group_delay(self, coeffs):
+        w, f, H = self.frequency_response(coeffs)
+        phase = np.unwrap(np.angle(H))
+        # Pochodna fazy
+        tau = -np.gradient(phase, w)
+        # Jedna wartość reprezentatywna:
+        # średnia z pierwszych 10% pasma (bez DC = 0)
+        low_band = tau[1 : int(0.1 * len(tau))]
+        delay = np.mean(low_band)
+        return tau, delay
 
     def compare_responses(self, probki, y, wyn):
         t_in = np.arange(len(probki))
