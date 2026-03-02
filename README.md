@@ -1,8 +1,205 @@
-# PBL_FIR
-Projekt PBL
+# Filtr FIR (APB + AXI, Dwie domeny zegarowe)
 
-Doc – na dokumenty, 
-Src - źródła sv,
-Tb (w /src) – tutaj proste tb do weryf.,
-CocoTB – tutaj już te koko spoko,
-Model FIR – ten model w pythonie xd
+Projekt przedstawia implementację sprzętowego filtru cyfrowego FIR (Finite Impulse Response) w języku SystemVerilog. Układ wyposażony jest w interfejs APB do konfiguracji rejestrów i sterowania oraz interfejs AXI4 do transferu danych. Układ pracuje w dwóch niezależnych domenach zegarowych A i B.
+
+Filtr obsługuje do 32 współczynników w formacie stałoprzecinkowym Q1.15 (16-bit, 2’s complement) oraz wykorzystuje wewnętrzne pamięci wejściowe i wyjściowe o rozmiarze 16 kB. Część arytmetyczna realizuje operację mnożenia i akumulacji z rozszerzoną precyzją oraz saturacją wyniku.
+
+Projekt zawiera weryfikację funkcjonalną w środowisku cocotb z wykorzystaniem modelu referencyjnego w Pythonie, a także testy DSP obejmujące analizę odpowiedzi impulsowej, odpowiedzi na sinusoidę oraz charakterystyki częstotliwościowej i opóźnienia grupowego.
+
+## Parametry filtru:
+
+- Maksymalna liczba współczynników (taps): 32
+
+- Szerokość próbek: 16 bit w kodzie signed 2's complement (Q1.15)
+
+- Szerokość danych AXI: 64 bit
+
+- Dane: tylko część rzeczywista
+
+## Część arytmetyczna:
+
+1.  mnożenie: 16b × 16b → 31b
+2.  przesunięcie >> 15 (powrót do Q1.15)
+3.  akumulacja w rozszerzonej precyzji (21 bit)
+4.  saturacja do 16 bit
+
+## Domeny zegarowe:
+
+- A: APB + rejestry konfiguracyjne
+- B: AXI + część arytmetyczna + pamięci
+
+# Struktura repozytorium
+
+```
+doc/             -> dokumentacja i schematy
+src/             -> pliki SystemVerilog + proste TB
+cocotb/          -> weryfikacja cocotb
+modelFIR/        -> model referencyjny w w Pythonie
+environment.yml  -> plik konfiguracyjny w formacie YAML dla środowiska conda
+README.md        -> ten plik README
+```
+
+## Organizacja kodu
+
+```
+├── doc/
+│   ├── PeBeeL_v2.9.pdf - dokumentacja.
+│   ├── Schemat_PBL_.pdf - schemat RTL.
+│   ├── Schemat_PBL__Podzial_Testy.pdf - podział schematu na części do testów.
+│   └── Schemat_PBL__moduly_do_testow.pdf - sygnały do każdej z części.
+│
+├── src/
+│   ├── tb - prosty tb
+│   ├── .  - pliki źródłowe w SystemVerilog
+│       .
+│       .
+│
+├── cocotb/
+│   ├── apb_testy/
+│   ├── axi_testy/
+│   ├── cdc_testy/
+│   ├── fir_testy/
+│   └── top_testy/
+│
+├── modelFIR/
+│   ├── model_fir.py - model referencyjny w Python
+│
+├── environment.yml
+├── README.md
+```
+
+## 3 główne moduły projektu
+
+- APB_main: APB3, CDC, Dekoder, MUX_Dekoder, MUX_CDC_wsp, Rejestry
+  sterujące, RAM(wsp).
+
+- AXI_main: AXI, MUX_AXI_wej, RAM wej, RAM wyj, MUX_AXI_wyj.
+
+- FIR_main: FSM, Licznik, Licznik petli, Shift R, Acc, mnozenie, sumowanie.
+  pbl_TOP – top module.
+
+<p align="center">
+  <a href="doc/Schemat_PBL_ver_2_moduly_do_testow.pdf">
+    <img src="doc/Schemat_PBL_ver_2_moduly_do_testow.png" width="700">
+  </a>
+  <br>
+  <em>Rys 1. 3 główne moduły projektu (PDF).</em>
+</p>
+
+# Uruchomienie projektu
+
+## Wymagania
+
+- Python 3.10
+
+- cocotb 1.9
+
+- cocotb-bus
+
+- cocotbext-apb : https://github.com/SystematIC-Design/cocotbext-apb.git
+
+- Icarus Verilog
+
+- Dla systemu Windows zalecana jest instalacja C++ Build Tools
+
+# Przeprowadzanie testów na Windows z Anaconda
+
+Projekt wykorzystuje dedykowane środowisko Conda zdefiniowane w pliku:
+
+```
+environment.yml
+```
+
+Jeśli chcesz z niego skorzystać wykonaj ponizsze kroki.
+
+## 1. Wymagania wstępne (instalowane ręcznie)
+
+Zainstaluj:
+
+- C++ Build Tools : https://visualstudio.microsoft.com/visual-cpp-build-tools/,
+- Anaconda lub Miniconda,
+- Icarus Verilog (iverilog).
+
+Nastepnie sprawdź:
+
+```
+conda --version
+iverilog -V
+```
+
+Jeśli polecenie nie działa, należy dodać katalog bin iverilog do zmiennej PATH.
+
+## 2. Utworzenie środowiska Conda
+
+Wejdź do pliku `environment.yml` i podmień `C:\Users\msi\` w ostatniej lini kodu: `prefix: C:\Users\msi\anaconda3\envs\projectPBL` swoją ścieżką gdzie zaintalowałeś Anaconda. Nastepnie zapis plik.
+
+Aby zaistalować środowisko, przejdź w terminalu do katalogu głównego projektu i wykonaj:
+
+```
+conda env create -f environment.yml
+```
+
+Zainstalowane zostaną m.in.:
+
+- Python 3.10.19
+
+- cocotb 1.9.0
+
+- cocotb-bus
+
+- numpy
+
+- matplotlib
+
+- inne wymagane zależności
+
+## 3. Aktywacja środowiska
+
+```
+conda activate projectPBL
+```
+
+## 4. Weryfikacja instalacji
+
+Sprawdzenie wersji Python:
+
+```
+python --version
+```
+
+Sprawdzenie cocotb:
+
+```
+pip show cocotb
+```
+
+Sprawdzenie symulatora:
+
+```
+iverilog -V
+```
+
+## 5. Uruchomienie testów
+
+Aby uruchomić testy przejdź w terminalu do wybranego folderu testów spośród:
+
+```
+cocotb/
+ ├── apb_testy/
+ ├── axi_testy/
+ ├── cdc_testy/
+ ├── fir_testy/
+ └── top_testy/
+```
+
+Następnie wykonaj polecenie:
+
+```
+make SIM=icarus
+```
+
+Można też uruchomić tylko wybrany test, przykład:
+
+```
+make SIM=icarus WAVES=1 TESTCASE=axi_test_1
+```
