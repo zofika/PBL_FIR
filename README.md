@@ -8,25 +8,25 @@ Projekt zawiera weryfikację funkcjonalną w środowisku cocotb z wykorzystaniem
 
 ## Parametry filtru:
 
-- Maksymalna liczba współczynników (taps): 32
+- Maksymalna liczba współczynników (taps): 32.
 
-- Szerokość próbek: 16 bit w kodzie signed 2's complement (Q1.15)
+- Szerokość próbek: 16 bit w kodzie signed 2's complement (Q1.15).
 
-- Szerokość danych AXI: 64 bit
+- Szerokość danych AXI: 64 bit.
 
-- Dane: tylko część rzeczywista
+- Dane: tylko część rzeczywista.
 
 ## Część arytmetyczna:
 
-1.  mnożenie: 16 bit × 16 bit → 31 bit
-2.  przesunięcie >> 15 bit (powrót do Q1.15)
-3.  akumulacja w rozszerzonej precyzji (21 bit)
-4.  saturacja do 16 bit
+1.  mnożenie: 16 bit × 16 bit → 31 bit,
+2.  przesunięcie >> 15 bit (powrót do Q1.15),
+3.  akumulacja w rozszerzonej precyzji (21 bit),
+4.  saturacja do 16 bit.
 
 ## Domeny zegarowe:
 
-- A: APB + rejestry konfiguracyjne
-- B: AXI + część arytmetyczna + pamięci
+- A: APB + rejestry konfiguracyjne.
+- B: AXI + część arytmetyczna + pamięci.
 
 # Struktura repozytorium
 
