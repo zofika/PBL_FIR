@@ -9,11 +9,8 @@ Projekt zawiera weryfikację funkcjonalną w środowisku cocotb z wykorzystaniem
 ## Parametry filtru:
 
 - Maksymalna liczba współczynników (taps): 32.
-
 - Szerokość próbek: 16 bit w kodzie signed 2's complement (Q1.15).
-
 - Szerokość danych AXI: 64 bit.
-
 - Dane: tylko część rzeczywista.
 
 ## Część arytmetyczna:
@@ -91,15 +88,10 @@ README.md        -> ten plik README
 ## Wymagania
 
 - Python 3.10
-
 - cocotb 1.9
-
 - cocotb-bus
-
 - cocotbext-apb : https://github.com/SystematIC-Design/cocotbext-apb.git
-
 - Icarus Verilog
-
 - Dla systemu Windows zalecana jest instalacja C++ Build Tools
 
 # Przeprowadzanie testów na Windows z Anaconda
@@ -142,15 +134,10 @@ conda env create -f environment.yml
 Zainstalowane zostaną m.in.:
 
 - Python 3.10.19
-
 - cocotb 1.9.0
-
 - cocotb-bus
-
 - numpy
-
 - matplotlib
-
 - inne wymagane zależności
 
 ## 3. Aktywacja środowiska
