@@ -18,8 +18,8 @@ Projekt zawiera weryfikację funkcjonalną w środowisku cocotb z wykorzystaniem
 
 ## Część arytmetyczna:
 
-1.  mnożenie: 16b × 16b → 31b
-2.  przesunięcie >> 15 (powrót do Q1.15)
+1.  mnożenie: 16 bit × 16 bit → 31 bit
+2.  przesunięcie >> 15 bit (powrót do Q1.15)
 3.  akumulacja w rozszerzonej precyzji (21 bit)
 4.  saturacja do 16 bit
 
@@ -83,7 +83,7 @@ README.md        -> ten plik README
     <img src="doc/Schemat_PBL_ver_2_moduly_do_testow.png" width="700">
   </a>
   <br>
-  <em>Rys 1. 3 główne moduły projektu (PDF).</em>
+  <em>Rys 1. Główne moduły projektu.</em>
 </p>
 
 # Uruchomienie projektu
@@ -131,7 +131,7 @@ Jeśli polecenie nie działa, należy dodać katalog bin iverilog do zmiennej PA
 
 ## 2. Utworzenie środowiska Conda
 
-Wejdź do pliku `environment.yml` i podmień `C:\Users\msi\` w ostatniej lini kodu: `prefix: C:\Users\msi\anaconda3\envs\projectPBL` swoją ścieżką gdzie zaintalowałeś Anaconda. Nastepnie zapis plik.
+Wejdź do pliku `environment.yml` i podmień `C:\Users\msi\` w ostatniej lini kodu: `prefix: C:\Users\msi\anaconda3\envs\projectPBL` swoją ścieżką gdzie zaintalowałeś Anaconda. Nastepnie zapisz plik.
 
 Aby zaistalować środowisko, przejdź w terminalu do katalogu głównego projektu i wykonaj:
 
