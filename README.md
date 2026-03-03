@@ -46,7 +46,7 @@ README.md        -> ten plik README
 │   └── Schemat_PBL__moduly_do_testow.pdf - sygnały do każdej z części.
 │
 ├── src/
-│   ├── tb - prosty tb
+│   ├── tb/ - prosty tb
 │   ├── .  - pliki źródłowe w SystemVerilog
 │       .
 │       .
@@ -59,13 +59,13 @@ README.md        -> ten plik README
 │   └── top_testy/
 │
 ├── modelFIR/
-│   ├── model_fir.py - model referencyjny w Python
+│   └── model_fir.py - model referencyjny w Python
 │
 ├── environment.yml
 ├── README.md
 ```
 
-## 3 główne moduły projektu
+## Główne moduły projektu
 
 - APB_main: APB3, CDC, Dekoder, MUX_Dekoder, MUX_CDC_wsp, Rejestry
   sterujące, RAM(wsp).
@@ -73,7 +73,6 @@ README.md        -> ten plik README
 - AXI_main: AXI, MUX_AXI_wej, RAM wej, RAM wyj, MUX_AXI_wyj.
 
 - FIR_main: FSM, Licznik, Licznik petli, Shift R, Acc, mnozenie, sumowanie.
-  pbl_TOP – top module.
 
 <p align="center">
   <a href="doc/Schemat_PBL_ver_2_moduly_do_testow.pdf">
@@ -92,7 +91,7 @@ README.md        -> ten plik README
 - cocotb-bus
 - cocotbext-apb : https://github.com/SystematIC-Design/cocotbext-apb.git
 - Icarus Verilog
-- Dla systemu Windows zalecana jest instalacja C++ Build Tools
+- Dla systemu Windows zalecana jest instalacja C++ Build Tools (wymaga tego wersja cocotb)
 
 # Przeprowadzanie testów na Windows z Anaconda
 
@@ -111,6 +110,7 @@ Zainstaluj:
 - C++ Build Tools : https://visualstudio.microsoft.com/visual-cpp-build-tools/,
 - Anaconda lub Miniconda,
 - Icarus Verilog (iverilog).
+- Git.
 
 Nastepnie sprawdź:
 
@@ -122,8 +122,6 @@ iverilog -V
 Jeśli polecenie nie działa, należy dodać katalog bin iverilog do zmiennej PATH.
 
 ## 2. Utworzenie środowiska Conda
-
-Wejdź do pliku `environment.yml` i podmień `C:\Users\msi\` w ostatniej lini kodu: `prefix: C:\Users\msi\anaconda3\envs\projectPBL` swoją ścieżką gdzie zaintalowałeś Anaconda. Nastepnie zapisz plik.
 
 Aby zaistalować środowisko, przejdź w terminalu do katalogu głównego projektu i wykonaj:
 
@@ -146,6 +144,15 @@ Zainstalowane zostaną m.in.:
 conda activate projectPBL
 ```
 
+Teraz należy zainstalować bibliotekę cocotbext-apb, w tym celu wykonaj:
+
+```
+conda install git
+git clone https://github.com/SystematIC-Design/cocotbext-apb.git
+cd cocotbext-apb
+python setup.py install
+```
+
 ## 4. Weryfikacja instalacji
 
 Sprawdzenie wersji Python:
@@ -164,6 +171,12 @@ Sprawdzenie symulatora:
 
 ```
 iverilog -V
+```
+
+Sprawdzenie czy paczka cocotbext-apb jest widoczna:
+
+```
+pip list | Select-String cocotbext-apb
 ```
 
 ## 5. Uruchomienie testów
