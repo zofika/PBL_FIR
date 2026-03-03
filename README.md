@@ -110,7 +110,6 @@ Zainstaluj:
 - C++ Build Tools : https://visualstudio.microsoft.com/visual-cpp-build-tools/,
 - Anaconda lub Miniconda,
 - Icarus Verilog (iverilog).
-- Git.
 
 Nastepnie sprawdź:
 
@@ -181,7 +180,7 @@ pip list | Select-String cocotbext-apb
 
 ## 5. Uruchomienie testów
 
-Aby uruchomić testy przejdź w terminalu do wybranego folderu testów spośród:
+Aby uruchomić testy przejdź w terminalu do wybranego folderu testów z folderu cocotb:
 
 ```
 cocotb/
